@@ -26,11 +26,11 @@ Evidence: test summary in console, `target/surefire-reports`, JaCoCo page, GitHu
 
 ## Task 2 ??Containerisation
 ```powershell
-ps> docker build --build-arg APP_VERSION=1.0.0 -t <dockerhub-user>/finsecure-pay:1.0.0 .
-ps> docker images <dockerhub-user>/finsecure-pay
-ps> docker run -d --name fsp -p 18080:8080 <dockerhub-user>/finsecure-pay:1.0.0
+ps> docker build --build-arg APP_VERSION=1.0.0 -t chungyi1979/finsecure-pay:1.0.0 .
+ps> docker images chungyi1979/finsecure-pay
+ps> docker run -d --name fsp -p 18080:8080 chungyi1979/finsecure-pay:1.0.0
 ps> curl.exe http://localhost:18080/health
-ps> docker login; docker push <dockerhub-user>/finsecure-pay:1.0.0
+ps> docker login; docker push chungyi1979/finsecure-pay:1.0.0
 ```
 Evidence: `docker images`, `docker ps`, `/health` response, Docker Hub tags page.
 
@@ -40,7 +40,7 @@ ps> eksctl create cluster -f infra/eks-cluster.yaml          # ~15-20 min
 ps> kubectl get nodes -o wide
 ps> kubectl apply -f k8s/00-namespace.yaml -f k8s/10-configmap.yaml
 ps> kubectl -n finsecure create secret generic finsecure-pay-secrets --from-literal=FINSECURE_API_KEY=<key>
-ps> (Get-Content k8s/20-deployment.yaml) -replace 'IMAGE_PLACEHOLDER','<dockerhub-user>/finsecure-pay:1.0.0' -replace 'CHANGE_CAUSE_PLACEHOLDER','manual 1.0.0' | kubectl apply -f -
+ps> (Get-Content k8s/20-deployment.yaml) -replace 'IMAGE_PLACEHOLDER','chungyi1979/finsecure-pay:1.0.0' -replace 'CHANGE_CAUSE_PLACEHOLDER','manual 1.0.0' | kubectl apply -f -
 ps> kubectl apply -f k8s/30-service.yaml
 ps> kubectl -n finsecure get deploy,rs,pods,svc -o wide
 ps> $LB = kubectl -n finsecure get svc finsecure-pay -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'

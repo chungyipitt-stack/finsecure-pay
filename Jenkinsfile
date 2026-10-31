@@ -1,4 +1,4 @@
-// =============================================================================
+﻿// =============================================================================
 // FinSecure Pay - CI/CD pipeline
 // Checkout -> Build -> Unit Test -> Code Quality (SonarCloud) -> Dependency Scan
 // (OWASP) -> Package -> Container Build -> Image Scan (Trivy) -> Push (Docker Hub)
@@ -36,14 +36,14 @@ pipeline {
 
     environment {
         APP_NAME        = 'finsecure-pay'
-        DOCKERHUB_USER  = 'CHANGE_ME_DOCKERHUB_USER'
+        DOCKERHUB_USER  = 'chungyi1979'
         IMAGE_REPO      = "${DOCKERHUB_USER}/${APP_NAME}"
         AWS_REGION      = 'ap-southeast-1'
         EKS_CLUSTER     = 'finsecure-eks'
         K8S_NAMESPACE   = 'finsecure'
-        SONAR_ORG       = 'CHANGE_ME_SONAR_ORG'
-        SONAR_PROJECT   = 'CHANGE_ME_SONAR_ORG_finsecure-pay'
-        NOTIFY_EMAIL    = 'CHANGE_ME@example.com'
+        SONAR_ORG       = 'chungyipitt-stack'
+        SONAR_PROJECT   = 'chungyipitt-stack_finsecure-pay'
+        NOTIFY_EMAIL    = 'chungyi.pitt@gmail.com'
         DC_DATA_DIR     = '/var/jenkins_home/dependency-check-data'   // cached NVD database
         TRIVY_CACHE_DIR = '/var/jenkins_home/trivy-cache'
     }
