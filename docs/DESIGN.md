@@ -1,17 +1,17 @@
-# FinSecure Pay – Cloud-Native DevOps Pipeline: Design Document
+﻿# FinSecure Pay ??Cloud-Native DevOps Pipeline: Design Document
 
 | | |
 |---|---|
-| **Project** | FinSecure Pay – Transaction Validation API |
+| **Project** | FinSecure Pay ??Transaction Validation API |
 | **Role** | DevOps Engineer |
-| **Repository** | `https://github.com/<your-user>/finsecure-pay` |
+| **Repository** | `https://github.com/chungyipitt-stack/finsecure-pay` |
 | **Target platform** | AWS EKS (ap-southeast-1), Docker Hub, Jenkins |
 
 ---
 
 ## 1. Purpose and scope
 
-FinSecure Pay is a small fintech startup that needs a fast, repeatable way to ship a transaction validation API with as little manual work as possible. This document describes the solution end to end: source code → automated quality and security gates → container image → managed Kubernetes → monitoring, alerting and logging → recovery. It also proposes a practical AI use case for operations.
+FinSecure Pay is a small fintech startup that needs a fast, repeatable way to ship a transaction validation API with as little manual work as possible. This document describes the solution end to end: source code ??automated quality and security gates ??container image ??managed Kubernetes ??monitoring, alerting and logging ??recovery. It also proposes a practical AI use case for operations.
 
 **Design goals:** (1) every change is built, tested and scanned the same way; (2) nothing insecure or broken reaches production; (3) deployments cause no downtime and can be rolled back in seconds; (4) problems are noticed by alerts before customers report them; (5) no secrets are kept in Git.
 
@@ -62,9 +62,9 @@ flowchart LR
     J -->|"Email Extension"| Mail
 ```
 
-**How a request flows:** the client calls the NLB → Service → one of two pods. The pod checks the `X-API-Key` header (the key comes from a Kubernetes Secret), applies the validation rules (limits come from the ConfigMap) and returns `200 APPROVED` or `422 REJECTED` with a list of rule violations.
+**How a request flows:** the client calls the NLB ??Service ??one of two pods. The pod checks the `X-API-Key` header (the key comes from a Kubernetes Secret), applies the validation rules (limits come from the ConfigMap) and returns `200 APPROVED` or `422 REJECTED` with a list of rule violations.
 
-**How a change flows:** `git push` → Jenkins notices it (polls every 2 minutes) → 11 stages run → if every gate passes, a new image tagged `1.0.0-<build>-<sha>` is pushed and rolled out to EKS with zero downtime → a smoke test confirms `/health` reports the new version → an email is sent.
+**How a change flows:** `git push` ??Jenkins notices it (polls every 2 minutes) ??11 stages run ??if every gate passes, a new image tagged `1.0.0-<build>-<sha>` is pushed and rolled out to EKS with zero downtime ??a smoke test confirms `/health` reports the new version ??an email is sent.
 
 ---
 
@@ -81,9 +81,9 @@ flowchart LR
 | Code quality | SonarCloud | Hosted SonarQube, so there is no server to run. `sonar.qualitygate.wait=true` makes the gate fail the build without needing an inbound webhook to a laptop. |
 | Dependency scan | OWASP Dependency-Check | Checks the Maven dependency tree against NVD. `failBuildOnCVSS=7` blocks HIGH and CRITICAL findings. |
 | Image scan | Trivy | Fast scanning of OS packages and the JAR. Blocks fixable HIGH/CRITICAL findings (`--ignore-unfixed`). |
-| Secrets | Jenkins Credentials → Kubernetes Secrets | Secrets live only in Jenkins' encrypted store (loaded from a git-ignored `.env`) and are turned into a Kubernetes Secret at deploy time. |
+| Secrets | Jenkins Credentials ??Kubernetes Secrets | Secrets live only in Jenkins' encrypted store (loaded from a git-ignored `.env`) and are turned into a Kubernetes Secret at deploy time. |
 | Monitoring | kube-prometheus-stack (Prometheus, Grafana, Alertmanager) | One Helm chart provides node, pod, kube-state and application metrics. ServiceMonitor and PrometheusRule are kept in Git with the app. |
-| Logging | EFK (Fluent Bit → Elasticsearch → Kibana) | Fluent Bit is a lightweight DaemonSet. The app writes Elastic Common Schema (ECS) JSON, so log fields are searchable without extra parsing rules. |
+| Logging | EFK (Fluent Bit ??Elasticsearch ??Kibana) | Fluent Bit is a lightweight DaemonSet. The app writes Elastic Common Schema (ECS) JSON, so log fields are searchable without extra parsing rules. |
 | Notifications | Jenkins Email Extension + Alertmanager email (Gmail SMTP) | Pipeline results and production alerts go to the same ops inbox. |
 
 **Alternatives and why they were not chosen:** GitHub Actions would need no server, but the brief recommends Jenkins. Self-hosted SonarQube needs about 2 GB of RAM and a database, so SonarCloud was chosen. Loki would be lighter than Elasticsearch, but EFK matches the recommended stack.
@@ -106,7 +106,7 @@ flowchart LR
 | Layer | Control |
 |---|---|
 | Code | SonarCloud quality gate (bugs, vulnerabilities, code smells, coverage on new code). |
-| Dependencies | OWASP Dependency-Check, **gate at CVSS ≥ 7**; a suppression file is allowed for confirmed false positives only. |
+| Dependencies | OWASP Dependency-Check, **gate at CVSS ??7**; a suppression file is allowed for confirmed false positives only. |
 | Image | Trivy, **gate on fixable HIGH/CRITICAL**; minimal `eclipse-temurin:21-jre-alpine` base with `apk upgrade`; multi-stage build so Maven and the JDK are not in the runtime image. |
 | Runtime | Non-root UID 10001, `readOnlyRootFilesystem`, all Linux capabilities dropped, `allowPrivilegeEscalation: false`, seccomp `RuntimeDefault`, CPU and memory limits. |
 | API | `X-API-Key` checked with a constant-time comparison; error responses never include stack traces (`include-stacktrace: never`); malformed input returns 400 or 415 JSON responses. |
@@ -128,7 +128,7 @@ flowchart LR
 
 | Failure | Detection | Automatic / manual recovery |
 |---|---|---|
-| Pod crash or deletion | ReplicaSet controller; `FinSecurePayReplicasUnavailable` alert | Kubernetes recreates the pod (shown by deleting a pod; the replacement was Ready in about 30–40 s). |
+| Pod crash or deletion | ReplicaSet controller; `FinSecurePayReplicasUnavailable` alert | Kubernetes recreates the pod (shown by deleting a pod; the replacement was Ready in about 30??0 s). |
 | App hang or deadlock | Liveness probe fails 3 times | Kubelet restarts the container; `FinSecurePayPodRestarting` alert fires on crash loops. |
 | Bad release (never becomes ready) | `kubectl rollout status --timeout=180s` in Jenkins | **Automatic `kubectl rollout undo`**, and the build is marked failed. Old pods keep serving because `maxUnavailable` is 0. |
 | Bad release (ready but functionally wrong) | Smoke test, alerts, dashboards | Jenkins `MODE=rollback` (previous revision or a specific `ROLLBACK_TAG`); `revisionHistoryLimit: 10`. |
@@ -143,14 +143,14 @@ flowchart LR
 When an alert such as `FinSecurePayHighRejectionRate` fires, the on-call engineer has to connect Grafana metrics, Kibana logs, recent Jenkins deployments and Kubernetes events by hand. In a small startup this person may be a developer woken at 3 a.m., so mean time to resolution (MTTR) depends on who happens to be on call. The data is high-volume and unstructured (logs, events, diffs), which suits a large language model (LLM) that can summarise and reason across sources. Classic statistical anomaly detection complements it by spotting deviations *before* fixed thresholds are crossed.
 
 ### 7.2 Inputs
-- **Metrics (Prometheus API):** rejection ratio, violation codes, p95 latency, 5xx rate, restarts, CPU and memory for a ±30 min window.
+- **Metrics (Prometheus API):** rejection ratio, violation codes, p95 latency, 5xx rate, restarts, CPU and memory for a 簣30 min window.
 - **Logs (Elasticsearch):** WARN/ERROR lines for `namespace=finsecure`, grouped into patterns (e.g. top violation codes, stack-trace signatures).
 - **Change context:** the last 3 Jenkins builds (image tag, commit messages, diff summary, scan results) and the `kubectl rollout history`, ConfigMap diffs and Kubernetes events.
 - **Knowledge:** runbooks and past post-mortems (retrieval-augmented generation).
 - **Prompt (template):** *"You are an SRE assistant. Given the alert, metrics, log patterns and recent changes, rank the 3 most likely root causes with evidence, state your confidence, and propose safe next steps from the runbook. Do not invent data."*
 
 ### 7.3 Expected operational benefits
-- An incident summary in the alert email or chat within about 60 s, instead of 15–30 minutes of manual correlation, which targets an MTTR reduction of 30–50%.
+- An incident summary in the alert email or chat within about 60 s, instead of 15??0 minutes of manual correlation, which targets an MTTR reduction of 30??0%.
 - Faster detection of deployment-related regressions, e.g. *"Rejections rose 4 minutes after build #42, which changed `MAX_TRANSACTION_AMOUNT` from 10000 to 1000; suggest rollback to 1.0.0-41-abc123."*
 - Anomaly detection on the business metrics finds slow drifts that fixed thresholds miss, with fewer false-positive pages.
 - Junior engineers get consistent, runbook-based guidance, and post-mortem drafts are written automatically.
@@ -194,4 +194,4 @@ Alertmanager already routes `team=finsecure` alerts. A second `webhook_configs` 
 4. Ephemeral Jenkins agents on Kubernetes with Kaniko or BuildKit (no root Docker socket).
 5. Selenium/REST-Assured API tests and OWASP ZAP DAST against a staging namespace before production.
 6. HPA on request rate, Elasticsearch with persistent storage and security enabled, and SLO-based (error-budget) alerting.
-7. Build the AI triage service from §7 as a proof of concept.
+7. Build the AI triage service from 禮7 as a proof of concept.
