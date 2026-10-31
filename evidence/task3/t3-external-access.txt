@@ -1,0 +1,13 @@
+﻿### 2026-11-01T06:08:18.2937060+08:00  External endpoint: http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com
+### GET /health
+{"status":"UP","service":"finsecure-pay","version":"1.0.0","environment":"production-eks","timestamp":"2026-10-31T22:08:19.140826669Z"} [HTTP 200]
+
+### POST /validate (valid)
+{"transactionId":"TXN-EKS-0001","status":"APPROVED","violations":[],"validatedAt":"2026-10-31T22:08:19.607634309Z"} [HTTP 200]
+
+### POST /validate (blocked account from ConfigMap + over limit)
+{"transactionId":"TXN-EKS-0002","status":"REJECTED","violations":[{"code":"SOURCE_ACCOUNT_BLOCKED","message":"sourceAccount is blocked by compliance"},{"code":"AMOUNT_EXCEEDS_LIMIT","message":"amount 15000 exceeds limit 10000.00"}],"validatedAt":"2026-10-31T22:08:20.063700554Z"} [HTTP 422]
+
+### POST /validate (no API key)
+{"status":401,"code":"UNAUTHORIZED","message":"Missing or invalid API key"} [HTTP 401]
+

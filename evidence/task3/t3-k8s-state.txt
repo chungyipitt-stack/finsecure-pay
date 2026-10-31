@@ -1,0 +1,62 @@
+﻿### 2026-11-01T06:06:04.8632490+08:00
+### kubectl get nodes,deploy,rs,pods,svc,pdb -n finsecure -o wide
+NAME                                                STATUS   ROLES    AGE    VERSION                INTERNAL-IP      EXTERNAL-IP      OS-IMAGE                        KERNEL-VERSION                     CONTAINER-RUNTIME
+ip-192-168-57-78.ap-southeast-1.compute.internal    Ready    <none>   113s   v1.34.12-eks-6e7947a   192.168.57.78    47.129.24.11     Amazon Linux 2023.12.20261102   6.12.113-138.209.amzn2023.x86_64   containerd://2.3.7+unknown
+ip-192-168-66-201.ap-southeast-1.compute.internal   Ready    <none>   114s   v1.34.12-eks-6e7947a   192.168.66.201   54.255.183.136   Amazon Linux 2023.12.20261102   6.12.113-138.209.amzn2023.x86_64   containerd://2.3.7+unknown
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS      IMAGES                            SELECTOR
+deployment.apps/finsecure-pay   2/2     2            2           40s   finsecure-pay   chungyi1979/finsecure-pay:1.0.0   app.kubernetes.io/name=finsecure-pay
+
+NAME                                       DESIRED   CURRENT   READY   AGE   CONTAINERS      IMAGES                            SELECTOR
+replicaset.apps/finsecure-pay-754c5d8fdc   2         2         2       40s   finsecure-pay   chungyi1979/finsecure-pay:1.0.0   app.kubernetes.io/name=finsecure-pay,pod-template-hash=754c5d8fdc
+
+NAME                                 READY   STATUS    RESTARTS   AGE   IP               NODE                                                NOMINATED NODE   READINESS GATES
+pod/finsecure-pay-754c5d8fdc-kw74t   1/1     Running   0          40s   192.168.39.232   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+pod/finsecure-pay-754c5d8fdc-t8w7x   1/1     Running   0          40s   192.168.64.16    ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)        AGE   SELECTOR
+service/finsecure-pay   LoadBalancer   10.100.216.204   a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com   80:32765/TCP   38s   app.kubernetes.io/name=finsecure-pay
+
+NAME                                       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+poddisruptionbudget.policy/finsecure-pay   1               N/A               1                     38s
+### Probes & replicas (kubectl describe deploy)
+
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+RollingUpdateStrategy:  0 max unavailable, 1 max surge
+    Image:      chungyi1979/finsecure-pay:1.0.0
+    Liveness:   http-get http://:http/actuator/health/liveness delay=0s timeout=2s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:http/actuator/health/readiness delay=0s timeout=2s period=5s #success=1 #failure=3
+    Startup:    http-get http://:http/actuator/health/liveness delay=0s timeout=1s period=5s #success=1 #failure=24
+    Environment Variables from:
+      finsecure-pay-config  ConfigMap  Optional: false
+      FINSECURE_API_KEY:  <set to the key 'FINSECURE_API_KEY' in secret 'finsecure-pay-secrets'>  Optional: false
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   finsecure-pay-754c5d8fdc (2/2 replicas created)
+  Normal  ScalingReplicaSet  41s   deployment-controller  Scaled up replica set finsecure-pay-754c5d8fdc from 0 to 2
+### ConfigMap
+apiVersion: v1
+data:
+  APP_ENVIRONMENT: production-eks
+  BLOCKED_ACCOUNTS: 1111111111,9999999999
+  LOGGING_LEVEL_COM_FINSECURE: INFO
+  LOGGING_STRUCTURED_FORMAT_CONSOLE: ecs
+  MAX_FUTURE_SKEW_SECONDS: "300"
+  MAX_TRANSACTION_AMOUNT: "10000.00"
+  MIN_TRANSACTION_AMOUNT: "0.01"
+  SUPPORTED_CURRENCIES: SGD,USD,EUR,MYR
+kind: ConfigMap
+metadata:
+  annotations:
+      {"apiVersion":"v1","data":{"APP_ENVIRONMENT":"production-eks","BLOCKED_ACCOUNTS":"1111111111,9999999999","LOGGING
+_LEVEL_COM_FINSECURE":"INFO","LOGGING_STRUCTURED_FORMAT_CONSOLE":"ecs","MAX_FUTURE_SKEW_SECONDS":"300","MAX_TRANSACTION
+_AMOUNT":"10000.00","MIN_TRANSACTION_AMOUNT":"0.01","SUPPORTED_CURRENCIES":"SGD,USD,EUR,MYR"},"kind":"ConfigMap","metad
+ata":{"annotations":{},"labels":{"app.kubernetes.io/name":"finsecure-pay"},"name":"finsecure-pay-config","namespace":"f
+insecure"}}
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+  name: finsecure-pay-config
+  namespace: finsecure
+
+

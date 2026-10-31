@@ -18,7 +18,9 @@ iam:
 
 managedNodeGroups:
   - name: ng-general
-    instanceType: t3.large          # 2 vCPU / 8 GiB - fits app + Prometheus stack + EFK
+    # m7i-flex.large: 2 vCPU / 8 GiB - fits app + Prometheus stack + EFK.
+    # (Free-Tier-plan accounts reject non-eligible types such as t3.large.)
+    instanceType: m7i-flex.large
     desiredCapacity: 2
     minSize: 2
     maxSize: 3
@@ -33,7 +35,6 @@ addons:
   - name: vpc-cni
   - name: coredns
   - name: kube-proxy
-  - name: metrics-server
 
 cloudWatch:
   clusterLogging:

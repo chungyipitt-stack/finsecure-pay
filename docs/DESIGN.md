@@ -37,7 +37,7 @@ flowchart LR
 
     subgraph AWS["AWS ap-southeast-1"]
         NLB["Network Load Balancer"]
-        subgraph EKS["EKS cluster: 2 x t3.large"]
+        subgraph EKS["EKS cluster: 2 x m7i-flex.large"]
             subgraph NS1["ns: finsecure"]
                 SVC["Service (LoadBalancer)"] --> P1["Pod 1"]
                 SVC --> P2["Pod 2"]
