@@ -99,7 +99,7 @@ export SMTP_USER=you@gmail.com SMTP_PASSWORD='app-password' ALERT_EMAIL_TO=you@g
 | Live logs of all replicas | `kubectl -n finsecure logs -l app.kubernetes.io/name=finsecure-pay -f --prefix` |
 | Previous crashed container | `kubectl -n finsecure logs <pod> --previous` |
 | Why a pod is not starting | `kubectl -n finsecure describe pod <pod>`; `kubectl -n finsecure get events --sort-by=.lastTimestamp` |
-| Centralised search | `kubectl -n logging port-forward svc/kibana 5601:5601`, open http://localhost:5601, create data view `k8s-logs-*`, then query `kubernetes.namespace_name:"finsecure" and app.log_level:"WARN"` |
+| Centralised search | `kubectl -n logging port-forward svc/kibana 5601:5601`, open http://localhost:5601, create data view `k8s-logs-*`, then query `kubernetes.namespace_name:"finsecure" and app.log.level:"WARN"` |
 | Find a specific transaction | Kibana: `app.message:"TXN-LOAD-42"` |
 | Pipeline logs | Jenkins build ??*Console Output* (and the failure email has the log attached) |
 
