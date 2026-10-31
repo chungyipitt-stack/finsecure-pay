@@ -1,0 +1,10 @@
+﻿### 2026-11-01T06:58:04.0881687+08:00
+### Rejection ratio (2m)
+ratio = 0.833
+### Prometheus alerts
+FinSecurePayHighRejectionRate  state=firing  activeAt=2026-10-31T22:54:33.276486462Z  value=8.326848249027238e-01
+### Alertmanager active alerts
+System.Object[]  status=System.Object[]  startsAt=System.Object[]  receivers=null,finsecure-email,null,null
+### Alertmanager active alerts (routed to e-mail)
+FinSecurePayHighRejectionRate  severity=warning  status=active  startsAt=2026-10-31T22:55:33.276Z  receiver=finsecure-email
+### 2026-11-01T06:58:48.0721712+08:00 Confirmed by user: FIRING e-mail received at chungyi.pitt@gmail.com
