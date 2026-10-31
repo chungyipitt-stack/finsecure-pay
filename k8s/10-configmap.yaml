@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: finsecure-pay-config
+  namespace: finsecure
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+data:
+  # Non-sensitive, environment-specific settings consumed as env vars via envFrom
+  APP_ENVIRONMENT: "production-eks"
+  MAX_TRANSACTION_AMOUNT: "10000.00"
+  MIN_TRANSACTION_AMOUNT: "0.01"
+  SUPPORTED_CURRENCIES: "SGD,USD,EUR,MYR"
+  BLOCKED_ACCOUNTS: "1111111111,9999999999"
+  MAX_FUTURE_SKEW_SECONDS: "300"
+  # Structured (Elastic Common Schema) JSON logs for Fluent Bit -> Elasticsearch
+  LOGGING_STRUCTURED_FORMAT_CONSOLE: "ecs"
+  LOGGING_LEVEL_COM_FINSECURE: "INFO"

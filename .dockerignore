@@ -1,0 +1,17 @@
+target/
+.git/
+.idea/
+.vscode/
+*.iml
+jenkins/
+k8s/
+monitoring/
+logging/
+infra/
+docs/
+evidence/
+scripts/
+*.md
+*.jpg
+Jenkinsfile
+.env

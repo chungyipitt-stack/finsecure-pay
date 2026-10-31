@@ -1,0 +1,10 @@
+# Trivy ignore policy - RISK ACCEPTANCES ONLY. Every entry needs: justification, owner, expiry.
+# Entries auto-expire (exp:) so the gate re-blocks if the risk is not resolved in time.
+#
+# CVE-2026-47884 / CVE-2026-47890 - org.springframework:spring-webmvc 6.2.19
+#   Fixed only in Spring Framework 7.0.9 (Spring Boot 4.x); no 6.2.x OSS fix exists.
+#   Not exploitable here: the app exposes JSON REST endpoints only - it uses no XsltView
+#   and no Server-Sent-Events view rendering (the vulnerable code paths).
+#   Remediation plan: migrate to Spring Boot 4.0.x before expiry. Owner: DevOps engineer.
+CVE-2026-47884 exp:2026-12-31
+CVE-2026-47890 exp:2026-12-31

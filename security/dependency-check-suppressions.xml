@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OWASP Dependency-Check suppressions.
+  Only add entries for verified FALSE POSITIVES or formally ACCEPTED, NON-EXPLOITABLE risks,
+  each with a justification and an expiry date ("until"). Fixable vulnerabilities must be
+  remediated (upgrade), never suppressed.
+-->
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <suppress until="2026-12-31Z">
+        <notes><![CDATA[
+        spring-webmvc 6.2.19: CVE-2026-47884 (XsltView) and CVE-2026-47890 (SSE view rendering).
+        Fixed only in Spring Framework 7.0.9 / Spring Boot 4. The API uses neither XsltView nor SSE views.
+        Accepted until 2026-12-31 pending Spring Boot 4 migration. Mirrors .trivyignore.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-webmvc@.*$</packageUrl>
+        <cve>CVE-2026-47884</cve>
+        <cve>CVE-2026-47890</cve>
+    </suppress>
+</suppressions>

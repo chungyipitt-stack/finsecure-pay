@@ -1,0 +1,38 @@
+# Fluent Bit (DaemonSet) Helm values: tail container logs on every node, enrich with
+# Kubernetes metadata, parse the app's ECS JSON logs, ship to Elasticsearch.
+config:
+  inputs: |
+    [INPUT]
+        Name              tail
+        Tag               kube.*
+        Path              /var/log/containers/*.log
+        Exclude_Path      /var/log/containers/fluent-bit*,/var/log/containers/*_kube-system_*
+        multiline.parser  docker, cri
+        Mem_Buf_Limit     10MB
+        Skip_Long_Lines   On
+        Refresh_Interval  10
+
+  filters: |
+    [FILTER]
+        Name                kubernetes
+        Match               kube.*
+        Merge_Log           On
+        Merge_Log_Key       app
+        Keep_Log            Off
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude On
+        Labels              On
+        Annotations         Off
+
+  outputs: |
+    [OUTPUT]
+        Name                es
+        Match               kube.*
+        Host                elasticsearch.logging.svc
+        Port                9200
+        Logstash_Format     On
+        Logstash_Prefix     k8s-logs
+        Suppress_Type_Name  On
+        Replace_Dots        On
+        Retry_Limit         5
+        Trace_Error         On

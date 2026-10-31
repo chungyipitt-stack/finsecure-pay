@@ -1,0 +1,8 @@
+# Keep shell scripts and the Maven wrapper with LF endings so they run in Linux containers / Jenkins
+* text=auto
+mvnw text eol=lf
+*.sh text eol=lf
+Jenkinsfile text eol=lf
+mvnw.cmd text eol=crlf
+*.jpg binary
+*.png binary

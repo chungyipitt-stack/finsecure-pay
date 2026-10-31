@@ -1,0 +1,40 @@
+# kube-prometheus-stack values for FinSecure Pay
+# Install: see monitoring/install-monitoring.sh (SMTP password is passed at install time, never committed)
+
+# Pick up ServiceMonitors / PrometheusRules from any namespace regardless of labels
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    retention: 3d
+    resources:
+      requests: { cpu: 200m, memory: 512Mi }
+      limits:   { memory: 1Gi }
+
+grafana:
+  # admin password is supplied from a Kubernetes Secret created by the install script
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  service:
+    type: LoadBalancer
+    port: 80
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      searchNamespace: ALL
+  defaultDashboardsTimezone: Asia/Singapore
+
+alertmanager:
+  alertmanagerSpec:
+    # Alertmanager config (with SMTP credentials) is stored in this Secret, created by the install script
+    useExistingSecret: true
+    configSecret: alertmanager-finsecure-config
+
+kube-state-metrics:
+  enabled: true
+nodeExporter:
+  enabled: true

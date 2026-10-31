@@ -1,0 +1,24 @@
+# Build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Secrets - NEVER commit
+.env
+*.env
+!*.env.example
+*secret*.yaml
+!*secret*.example.yaml
+kubeconfig*
+*.pem
+*.key
+
+# Local tool data
+dependency-check-data/
+jenkins/data/
+evidence/raw/

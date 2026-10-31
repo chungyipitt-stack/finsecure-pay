@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finsecure-pay
+  namespace: finsecure
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+    app.kubernetes.io/part-of: finsecure-pay
+  annotations:
+    kubernetes.io/change-cause: "CHANGE_CAUSE_PLACEHOLDER"
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10          # keep history for `kubectl rollout undo`
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: finsecure-pay
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0             # zero-downtime: never drop below desired replicas
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: finsecure-pay
+        app.kubernetes.io/part-of: finsecure-pay
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8080"
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      # Spread replicas across nodes so a node failure does not take the service down
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: finsecure-pay
+      containers:
+        - name: finsecure-pay
+          image: IMAGE_PLACEHOLDER
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: finsecure-pay-config
+          env:
+            - name: FINSECURE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: finsecure-pay-secrets
+                  key: FINSECURE_API_KEY
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          # Startup probe gives the JVM time to boot before liveness kicks in
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 5
+            failureThreshold: 24       # up to 120s to start
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              exec:
+                # Give the load balancer time to deregister the pod before shutdown
+                command: ["sh", "-c", "sleep 5"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

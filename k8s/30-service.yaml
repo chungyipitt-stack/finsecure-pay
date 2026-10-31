@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: finsecure-pay
+  namespace: finsecure
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+  annotations:
+    # Provision an internet-facing AWS load balancer for external access
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: finsecure-pay
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: finsecure-pay
+  namespace: finsecure
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: finsecure-pay

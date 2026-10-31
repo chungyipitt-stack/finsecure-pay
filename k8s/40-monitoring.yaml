@@ -1,0 +1,111 @@
+# Requires kube-prometheus-stack (Prometheus Operator CRDs). See monitoring/README.md
+# ---------------------------------------------------------------------------
+# ServiceMonitor: tells Prometheus to scrape /actuator/prometheus on every pod
+# ---------------------------------------------------------------------------
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: finsecure-pay
+  namespace: finsecure
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: finsecure-pay
+  namespaceSelector:
+    matchNames: ["finsecure"]
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: 15s
+---
+# ---------------------------------------------------------------------------
+# Alert rules (evaluated by Prometheus, routed by Alertmanager -> email)
+# ---------------------------------------------------------------------------
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: finsecure-pay-alerts
+  namespace: finsecure
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+    release: monitoring
+spec:
+  groups:
+    - name: finsecure-pay.availability
+      rules:
+        - alert: FinSecurePayReplicasUnavailable
+          expr: |
+            kube_deployment_status_replicas_available{namespace="finsecure",deployment="finsecure-pay"}
+              < kube_deployment_spec_replicas{namespace="finsecure",deployment="finsecure-pay"}
+          for: 1m
+          labels:
+            severity: critical
+            team: finsecure
+          annotations:
+            summary: "FinSecure Pay has fewer available replicas than desired"
+            description: "{{ $value }} replica(s) available for deployment finsecure-pay for more than 1 minute."
+            runbook: "kubectl -n finsecure get pods; kubectl -n finsecure describe deploy finsecure-pay"
+
+        - alert: FinSecurePayDown
+          expr: absent(up{namespace="finsecure",service="finsecure-pay"} == 1)
+          for: 1m
+          labels:
+            severity: critical
+            team: finsecure
+          annotations:
+            summary: "No FinSecure Pay pod is being successfully scraped"
+            description: "All finsecure-pay targets are down or missing for more than 1 minute."
+
+        - alert: FinSecurePayPodRestarting
+          expr: increase(kube_pod_container_status_restarts_total{namespace="finsecure",container="finsecure-pay"}[10m]) > 2
+          labels:
+            severity: warning
+            team: finsecure
+          annotations:
+            summary: "FinSecure Pay pod {{ $labels.pod }} is restarting frequently"
+            description: "{{ $value | humanize }} restarts in the last 10 minutes (possible crash loop / OOM)."
+
+    - name: finsecure-pay.business
+      rules:
+        - alert: FinSecurePayHighRejectionRate
+          expr: |
+            (
+              sum(rate(finsecure_validations_total{namespace="finsecure",result="rejected"}[2m]))
+              /
+              sum(rate(finsecure_validations_total{namespace="finsecure"}[2m]))
+            ) > 0.5
+            and sum(rate(finsecure_validations_total{namespace="finsecure"}[2m])) > 0.2
+          for: 1m
+          labels:
+            severity: warning
+            team: finsecure
+          annotations:
+            summary: "More than 50% of transactions are being rejected"
+            description: "Rejection ratio is {{ $value | humanizePercentage }} - possible fraud attack, client bug or bad config."
+
+        - alert: FinSecurePayHighLatency
+          expr: |
+            histogram_quantile(0.95,
+              sum by (le) (rate(http_server_requests_seconds_bucket{namespace="finsecure",uri="/validate"}[5m]))
+            ) > 0.5
+          for: 2m
+          labels:
+            severity: warning
+            team: finsecure
+          annotations:
+            summary: "p95 latency of /validate is above 500ms"
+            description: "p95 latency is {{ $value | humanizeDuration }}."
+
+        - alert: FinSecurePayHigh5xxRate
+          expr: |
+            sum(rate(http_server_requests_seconds_count{namespace="finsecure",status=~"5.."}[5m]))
+              / sum(rate(http_server_requests_seconds_count{namespace="finsecure"}[5m])) > 0.05
+          for: 2m
+          labels:
+            severity: critical
+            team: finsecure
+          annotations:
+            summary: "More than 5% of requests are failing with HTTP 5xx"

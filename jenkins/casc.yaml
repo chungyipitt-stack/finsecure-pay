@@ -1,0 +1,76 @@
+# Jenkins Configuration-as-Code.
+# Every ${VAR} is resolved from the container environment (jenkins/.env, git-ignored),
+# so no secret is ever stored in this repository.
+jenkins:
+  systemMessage: "FinSecure Pay CI/CD - managed by Configuration-as-Code"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "dockerhub-creds"
+              description: "Docker Hub user + access token"
+              username: "${DOCKERHUB_USER}"
+              password: "${DOCKERHUB_TOKEN}"
+          - usernamePassword:
+              scope: GLOBAL
+              id: "aws-creds"
+              description: "AWS access key for EKS deploys"
+              username: "${AWS_ACCESS_KEY_ID}"
+              password: "${AWS_SECRET_ACCESS_KEY}"
+          - usernamePassword:
+              scope: GLOBAL
+              id: "smtp-creds"
+              description: "SMTP (Gmail app password) for Email Extension"
+              username: "${SMTP_USER}"
+              password: "${SMTP_PASSWORD}"
+          - string:
+              scope: GLOBAL
+              id: "sonarcloud-token"
+              description: "SonarCloud token"
+              secret: "${SONAR_TOKEN}"
+          - string:
+              scope: GLOBAL
+              id: "nvd-api-key"
+              description: "NVD API key for OWASP Dependency-Check"
+              secret: "${NVD_API_KEY}"
+          - string:
+              scope: GLOBAL
+              id: "finsecure-api-key"
+              description: "Application API key -> Kubernetes Secret"
+              secret: "${FINSECURE_API_KEY}"
+
+unclassified:
+  location:
+    url: "http://localhost:8088/"
+    adminAddress: "${SMTP_USER}"
+
+jobs:
+  - script: >
+      pipelineJob('finsecure-pay') {
+        description('FinSecure Pay - build, test, scan, containerise and deploy to EKS')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('${GITHUB_REPO_URL}') }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(false)
+          }
+        }
+      }

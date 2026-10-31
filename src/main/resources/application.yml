@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: finsecure-pay
+  lifecycle:
+    # Allow in-flight requests to finish during rolling updates / pod deletion
+    timeout-per-shutdown-phase: 20s
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+  shutdown: graceful
+  error:
+    include-stacktrace: never
+
+app:
+  environment: ${APP_ENVIRONMENT:local}
+
+finsecure:
+  validation:
+    max-amount: ${MAX_TRANSACTION_AMOUNT:10000.00}
+    min-amount: ${MIN_TRANSACTION_AMOUNT:0.01}
+    supported-currencies: ${SUPPORTED_CURRENCIES:SGD,USD,EUR,MYR}
+    blocked-accounts: ${BLOCKED_ACCOUNTS:}
+    max-future-skew-seconds: ${MAX_FUTURE_SKEW_SECONDS:300}
+  security:
+    # Injected from a Kubernetes Secret in-cluster. Never commit a real value here.
+    api-key: ${FINSECURE_API_KEY:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true      # /actuator/health/liveness and /actuator/health/readiness
+      show-details: never
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${app.environment}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  info:
+    env:
+      enabled: true
+    build:
+      enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: FinSecure Pay transaction validation API
+
+logging:
+  level:
+    root: INFO
+    com.finsecure: INFO
+  # In Kubernetes LOGGING_STRUCTURED_FORMAT_CONSOLE=ecs is set via ConfigMap so
+  # logs are emitted as Elastic Common Schema JSON for Fluent Bit -> Elasticsearch.

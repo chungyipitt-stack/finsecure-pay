@@ -1,0 +1,40 @@
+# eksctl cluster definition for FinSecure Pay
+#   Create:  eksctl create cluster -f infra/eks-cluster.yaml        (~15-20 min)
+#   Delete:  eksctl delete cluster -f infra/eks-cluster.yaml --disable-nodegroup-eviction
+# Cost guide (ap-southeast-1): EKS control plane ~US$0.10/h + 2x t3.large ~US$0.21/h + NLBs.
+# DELETE THE CLUSTER WHEN NOT IN USE.
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: finsecure-eks
+  region: ap-southeast-1
+  tags:
+    project: finsecure-pay
+    owner: devops-capstone
+
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+  - name: ng-general
+    instanceType: t3.large          # 2 vCPU / 8 GiB - fits app + Prometheus stack + EFK
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 3
+    volumeSize: 30
+    privateNetworking: false
+    labels:
+      role: general
+    tags:
+      project: finsecure-pay
+
+addons:
+  - name: vpc-cni
+  - name: coredns
+  - name: kube-proxy
+  - name: metrics-server
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["api", "audit"]   # control-plane audit trail
