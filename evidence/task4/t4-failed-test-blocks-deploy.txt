@@ -1,0 +1,115 @@
+=== Jenkins Build #2: Failed Unit Test Blocks Deployment ===
+
+Build #2 status=FAILED duration=97s
+  Declarative: Checkout SCM    SUCCESS          2s
+  Checkout                     SUCCESS         20s
+  Build                        SUCCESS         34s
+  Unit Test                    FAILED          18s
+  Code Quality - SonarCloud    FAILED           0s
+  Dependency Scan - OWASP      FAILED           0s
+  Package                      FAILED           0s
+  Container Build              FAILED           0s
+  Image Scan - Trivy           FAILED           0s
+  Push - Docker Hub            FAILED           0s
+  Deploy - EKS                 FAILED           0s
+  Rollback - EKS               FAILED           0s
+  Smoke Test                   FAILED           0s
+  Declarative: Post Actions    SUCCESS          9s
+
+Test Summary: passCount=42, failCount=7, skipCount=0
+
+=== Console Log Tail (Showing Skipped Downstream Stages & Blocked Deploy) ===
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Dependency Scan - OWASP)
+Stage "Dependency Scan - OWASP" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Package)
+Stage "Package" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Container Build)
+Stage "Container Build" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Image Scan - Trivy)
+Stage "Image Scan - Trivy" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push - Docker Hub)
+Stage "Push - Docker Hub" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy - EKS)
+Stage "Deploy - EKS" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Rollback - EKS)
+Stage "Rollback - EKS" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Smoke Test)
+Stage "Smoke Test" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
+[2026-11-02T00:07:21.158Z] + rm -f kubeconfig
+[Pipeline] sh
+[2026-11-02T00:07:21.444Z] + docker image prune -f
+[2026-11-02T00:07:22.789Z] Deleted Images:
+[2026-11-02T00:07:22.789Z] untagged: sha256:42f2d24ae18df9b5251d1cc45548085656d2335e9338fd150a24e415462d151f
+[2026-11-02T00:07:22.789Z] deleted: sha256:42f2d24ae18df9b5251d1cc45548085656d2335e9338fd150a24e415462d151f
+[2026-11-02T00:07:22.789Z] deleted: sha256:c85f13d520611b398cf6ffb0f75c894173d238401b58b1fb9b989cd1149fbe58
+[2026-11-02T00:07:22.789Z] deleted: sha256:969039c45325cc42fd80e1e8d1fde5a2c9795c08aaeb4acd40ba5893d634d866
+[2026-11-02T00:07:22.789Z] untagged: sha256:5a88c9c45479443d7be2eadc894b4ed0a9801bae03d97a5760ae13b5c2005942
+[2026-11-02T00:07:22.789Z] deleted: sha256:5a88c9c45479443d7be2eadc894b4ed0a9801bae03d97a5760ae13b5c2005942
+[2026-11-02T00:07:22.789Z] deleted: sha256:db4f612f385437d11eb26620a4f1d7efb3ff44e1296a3c21540b30454e6e2bf3
+[2026-11-02T00:07:22.789Z] deleted: sha256:7f506a8a5a97f0fc5dfbea6036e9826352844f4242c42464505a8497e5528e64
+[2026-11-02T00:07:22.789Z] untagged: sha256:dc2d74b28e4cf8984fa52af1f39bc7c3d9c73760b41a74d629f5d11b1ab28616
+[2026-11-02T00:07:22.789Z] deleted: sha256:dc2d74b28e4cf8984fa52af1f39bc7c3d9c73760b41a74d629f5d11b1ab28616
+[2026-11-02T00:07:22.789Z] untagged: sha256:ec4ed8b5299e5e90694af7750eb6dffd2627317d30544d056b0371f8082f7bce
+[2026-11-02T00:07:22.789Z] deleted: sha256:ec4ed8b5299e5e90694af7750eb6dffd2627317d30544d056b0371f8082f7bce
+[2026-11-02T00:07:22.789Z] deleted: sha256:3b2371e667437fb3b406f090081775daf1ebcdb981d19bc497703b150f49e356
+[2026-11-02T00:07:22.789Z] deleted: sha256:bc43fdf9d4cb5c6feaff3c85b6e3163763df21db594ec9e4f8c9238725e48d39
+[2026-11-02T00:07:22.789Z] untagged: sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
+[2026-11-02T00:07:22.789Z] deleted: sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
+[2026-11-02T00:07:22.789Z] deleted: sha256:1cfa4e2b09e127b9c4ed43578d3f3c18e7d44ea47b9ea98475c0cbe9086525f8
+[2026-11-02T00:07:22.789Z] deleted: sha256:ffc88d62b497c8e4787c05bc8217822b61327f01ac264b380e1ee939202675b2
+[2026-11-02T00:07:22.789Z] 
+[2026-11-02T00:07:22.789Z] Total reclaimed space: 140.6MB
+[Pipeline] emailext
+[2026-11-02T00:07:23.012Z] Sending email to: chungyi.pitt@gmail.com
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

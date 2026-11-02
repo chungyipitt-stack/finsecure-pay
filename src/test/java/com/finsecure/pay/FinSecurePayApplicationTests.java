@@ -18,7 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 /**
  * Boots the full application context and exercises the real endpoints end-to-end.
  */
-@SpringBootTest(properties = "finsecure.validation.blocked-accounts=5555555555")
+@SpringBootTest(properties = {
+        "finsecure.validation.blocked-accounts=5555555555",
+        "finsecure.security.api-key="
+})
 @AutoConfigureMockMvc
 @AutoConfigureObservability
 class FinSecurePayApplicationTests {

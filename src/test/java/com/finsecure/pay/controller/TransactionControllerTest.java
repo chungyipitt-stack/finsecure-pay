@@ -22,7 +22,7 @@ import com.finsecure.pay.model.ValidationStatus;
 import com.finsecure.pay.model.Violation;
 import com.finsecure.pay.service.TransactionValidationService;
 
-@WebMvcTest(TransactionController.class)
+@WebMvcTest(value = TransactionController.class, properties = "finsecure.security.api-key=")
 class TransactionControllerTest {
 
     private static final String BODY = """
