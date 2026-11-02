@@ -1,0 +1,43 @@
+=== [TC02] Test Case: Introduce a controlled failing test ===
+Expected Result: Jenkins pipeline fails, and deployment does not proceed.
+
+--- Step 1: Execute controlled failing test (-Dfinsecure.test.simulateFailure=true) ---
+[INFO] Running com.finsecure.pay.ControlledEvaluationTest
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.083 s <<< FAILURE! -- in com.finsecure.pay.ControlledEvaluationTest
+org.opentest4j.AssertionFailedError: Controlled failing test triggered for CI/CD evaluation (TC02) - deployment must not proceed ==> expected: <false> but was: <true>
+[ERROR]   ControlledEvaluationTest.controlledEvaluationGate:21 Controlled failing test triggered for CI/CD evaluation (TC02) - deployment must not proceed ==> expected: <false> but was: <true>
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+[INFO] BUILD FAILURE
+
+--- Step 2: Verify Jenkins pipeline failure blocks Package, Push & EKS Deployment ---
+Jenkins Build #2 | Overall Status: FAILED | Duration: 97s
+  Stage: Declarative: Checkout SCM    Status: SUCCESS
+  Stage: Checkout                     Status: SUCCESS
+  Stage: Build                        Status: SUCCESS
+  Stage: Unit Test                    Status: FAILED
+  Stage: Code Quality - SonarCloud    Status: FAILED
+  Stage: Dependency Scan - OWASP      Status: FAILED
+  Stage: Package                      Status: FAILED
+  Stage: Container Build              Status: FAILED
+  Stage: Image Scan - Trivy           Status: FAILED
+  Stage: Push - Docker Hub            Status: FAILED
+  Stage: Deploy - EKS                 Status: FAILED
+  Stage: Rollback - EKS               Status: FAILED
+  Stage: Smoke Test                   Status: FAILED
+  Stage: Declarative: Post Actions    Status: SUCCESS
+
+Console Excerpt (Skipped Downstream Stages):
+  [2026-11-02T00:07:19.106Z] [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project finsecure-pay: There are test failures.
+  Stage "Code Quality - SonarCloud" skipped due to earlier failure(s)
+  Stage "Dependency Scan - OWASP" skipped due to earlier failure(s)
+  Stage "Package" skipped due to earlier failure(s)
+  Stage "Container Build" skipped due to earlier failure(s)
+  Stage "Image Scan - Trivy" skipped due to earlier failure(s)
+  Stage "Push - Docker Hub" skipped due to earlier failure(s)
+  Stage "Deploy - EKS" skipped due to earlier failure(s)
+  Stage "Rollback - EKS" skipped due to earlier failure(s)
+  Stage "Smoke Test" skipped due to earlier failure(s)
+  [2026-11-02T00:07:23.012Z] Sending email to: chungyi.pitt@gmail.com
+  Finished: FAILURE
+
+[PASS] TC02 Verified: Controlled failing test caused Jenkins pipeline to FAIL at 'Unit Test', and deployment to EKS did NOT proceed.

@@ -1,0 +1,38 @@
+=== [TC07] Test Case: Introduce a controlled critical/high security finding ===
+Expected Result: The security gate blocks the release.
+
+--- Step 1: Verify Jenkins Security Gate Stage Status (Build #3) ---
+Jenkins Build #3 | Overall Status: FAILED | Duration: 670s
+  Stage: Declarative: Checkout SCM    Status: SUCCESS
+  Stage: Checkout                     Status: SUCCESS
+  Stage: Build                        Status: SUCCESS
+  Stage: Unit Test                    Status: SUCCESS
+  Stage: Code Quality - SonarCloud    Status: SUCCESS
+  Stage: Dependency Scan - OWASP      Status: FAILED
+  Stage: Package                      Status: FAILED
+  Stage: Container Build              Status: FAILED
+  Stage: Image Scan - Trivy           Status: FAILED
+  Stage: Push - Docker Hub            Status: FAILED
+  Stage: Deploy - EKS                 Status: FAILED
+  Stage: Rollback - EKS               Status: FAILED
+  Stage: Smoke Test                   Status: FAILED
+  Stage: Declarative: Post Actions    Status: SUCCESS
+
+--- Step 2: Security Gate Console Findings (CVSS >= 7.0 HIGH/CRITICAL) ---
+  [2026-11-02T00:20:54.601Z] log4j-api-2.24.3.jar (pkg:maven/org.apache.logging.log4j/log4j-api@2.24.3, cpe:2.3:a:apache:log4j:2.24.3:*:*:*:*:*:*:*) : CVE-2026-34479, CVE-2026-34477, CVE-2026-49844
+  [2026-11-02T00:20:54.601Z] spring-core-6.2.19.jar (pkg:maven/org.springframework/spring-core@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*) : CVE-2026-47884, CVE-2026-47890, CVE-2026-47891, CVE-2026-47892, CVE-2026-59313, CVE-2026-59283, CVE-2026-47885, CVE-2026-47886, CVE-2026-47888, CVE-2026-47889, CVE-2026-47893, CVE-2026-59282, CVE-2026-47883, CVE-2026-47887, CVE-2026-59281, CVE-2026-59280, CVE-2026-59314
+  [2026-11-02T00:20:54.601Z] spring-webmvc-6.2.19.jar (pkg:maven/org.springframework/spring-webmvc@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*) : CVE-2026-47891, CVE-2026-47892, CVE-2026-59313, CVE-2026-59283, CVE-2026-47885, CVE-2026-47886, CVE-2026-47888, CVE-2026-47889, CVE-2026-47893, CVE-2026-59282, CVE-2026-47883, CVE-2026-47887, CVE-2026-59281, CVE-2026-59280, CVE-2026-59314
+  [2026-11-02T00:20:54.853Z] [ERROR] One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '7.0': 
+  [2026-11-02T00:20:54.853Z] [ERROR] log4j-api-2.24.3.jar (pkg:maven/org.apache.logging.log4j/log4j-api@2.24.3, cpe:2.3:a:apache:log4j:2.24.3:*:*:*:*:*:*:*): CVE-2026-34479(6.9)
+  [2026-11-02T00:20:54.853Z] [ERROR] spring-core-6.2.19.jar (pkg:maven/org.springframework/spring-core@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*): CVE-2026-47885(7.5), CVE-2026-47884(9.8), CVE-2026-47886(7.5), CVE-2026-47892(9.8), CVE-2026-47891(9.8), CVE-2026-47893(7.5), CVE-2026-47890(9.8), CVE-2026-59313(9.8), CVE-2026-59283(9.1), CVE-2026-47889(7.5), CVE-2026-47888(7.5), CVE-2026-59282(7.5)
+  [2026-11-02T00:20:54.853Z] [ERROR] spring-webmvc-6.2.19.jar (pkg:maven/org.springframework/spring-webmvc@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*): CVE-2026-47885(7.5), CVE-2026-47886(7.5), CVE-2026-47892(9.8), CVE-2026-47891(9.8), CVE-2026-47893(7.5), CVE-2026-59313(9.8), CVE-2026-59283(9.1), CVE-2026-47889(7.5), CVE-2026-47888(7.5), CVE-2026-59282(7.5)
+  Stage "Package" skipped due to earlier failure(s)
+  Stage "Container Build" skipped due to earlier failure(s)
+  Stage "Image Scan - Trivy" skipped due to earlier failure(s)
+  Stage "Push - Docker Hub" skipped due to earlier failure(s)
+  Stage "Deploy - EKS" skipped due to earlier failure(s)
+  Stage "Rollback - EKS" skipped due to earlier failure(s)
+  Stage "Smoke Test" skipped due to earlier failure(s)
+  Finished: FAILURE
+
+[PASS] TC07 Verified: HIGH/CRITICAL security finding was detected by the security gate (CVSS >= 7.0), halting the pipeline and blocking release to Docker Hub and EKS.

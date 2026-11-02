@@ -20,6 +20,10 @@ pipeline {
         string(name: 'ROLLBACK_TAG', defaultValue: '',
                description: 'rollback mode: image tag to roll back to (empty = previous revision via kubectl rollout undo)')
         booleanParam(name: 'SKIP_SONAR', defaultValue: false, description: 'Skip SonarCloud analysis (e.g. offline)')
+        booleanParam(name: 'SIMULATE_TEST_FAILURE', defaultValue: false,
+                     description: 'TC02: Introduce a controlled failing unit test to verify deployment is blocked')
+        booleanParam(name: 'SIMULATE_SECURITY_FINDING', defaultValue: false,
+                     description: 'TC07: Introduce a controlled CRITICAL security finding (CVE-2022-42889) to verify the security gate blocks release')
     }
 
     triggers {
@@ -76,7 +80,10 @@ pipeline {
             when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 // A failing test fails this stage, and therefore the whole pipeline - nothing is deployed.
-                sh './mvnw -B -ntp test'
+                script {
+                    def failFlag = (params.SIMULATE_TEST_FAILURE == true) ? '-Dfinsecure.test.simulateFailure=true' : ''
+                    sh "./mvnw -B -ntp test ${failFlag}"
+                }
             }
             post {
                 always {
@@ -89,16 +96,19 @@ pipeline {
         stage('Code Quality - SonarCloud') {
             when { allOf { expression { env.RUN_MODE == 'deploy' }; expression { !params.SKIP_SONAR } } }
             steps {
-                withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                    // sonar.qualitygate.wait=true makes the scanner fail the build if the Quality Gate fails
-                    sh '''
-                      ./mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar \
-                        -Dsonar.organization=${SONAR_ORG} \
-                        -Dsonar.projectKey=${SONAR_PROJECT} \
-                        -Dsonar.token=${SONAR_TOKEN} \
-                        -Dsonar.qualitygate.wait=true \
-                        -Dsonar.qualitygate.timeout=300
-                    '''
+                retry(2) {
+                    withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
+                        // sonar.qualitygate.wait=true makes the scanner fail the build if the Quality Gate fails
+                        sh '''
+                          ./mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar \
+                            -Dsonar.organization=${SONAR_ORG} \
+                            -Dsonar.projectKey=${SONAR_PROJECT} \
+                            -Dsonar.token=${SONAR_TOKEN} \
+                            -Dsonar.ws.timeout=180 \
+                            -Dsonar.qualitygate.wait=true \
+                            -Dsonar.qualitygate.timeout=300
+                        '''
+                    }
                 }
             }
         }
@@ -108,7 +118,10 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
                     // SECURITY GATE #1: fails when any dependency has a CVE with CVSS >= 7 (HIGH/CRITICAL)
-                    sh './mvnw -B -ntp org.owasp:dependency-check-maven:check -DdataDirectory=${DC_DATA_DIR}'
+                    script {
+                        def secProfile = (params.SIMULATE_SECURITY_FINDING == true) ? '-Psimulate-security-finding' : ''
+                        sh "./mvnw -B -ntp org.owasp:dependency-check-maven:check -DdataDirectory=\${DC_DATA_DIR} ${secProfile}"
+                    }
                 }
             }
             post {

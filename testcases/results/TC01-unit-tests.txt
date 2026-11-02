@@ -1,0 +1,20 @@
+=== [TC01] Test Case: Run unit tests ===
+Expected Result: Required unit tests pass.
+
+[INFO] Running com.finsecure.pay.ControlledEvaluationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.100 s -- in com.finsecure.pay.ControlledEvaluationTest
+[INFO] Running com.finsecure.pay.controller.TransactionControllerTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.492 s -- in com.finsecure.pay.controller.TransactionControllerTest
+[INFO] Running com.finsecure.pay.FinSecurePayApplicationTests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.119 s -- in com.finsecure.pay.FinSecurePayApplicationTests
+[INFO] Running com.finsecure.pay.security.ApiKeyFilterTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.118 s -- in com.finsecure.pay.security.ApiKeyFilterTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.057 s -- in identifier, currency and timestamp rules
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in account rules
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in amount rules
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in successful validation
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.147 s -- in TransactionValidationService
+[INFO] Tests run: 50, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+
+[PASS] TC01 Verified: All 50 required unit tests passed (0 failures, 0 errors).

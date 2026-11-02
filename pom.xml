@@ -128,4 +128,21 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Evaluation Core Test Case TC07:
+             Activate with -Psimulate-security-finding (or Jenkins parameter SIMULATE_SECURITY_FINDING=true)
+             to introduce a known CRITICAL vulnerability (org.apache.commons:commons-text:1.9,
+             CVE-2022-42889 Text4Shell, CVSS 9.8 CRITICAL) and verify the OWASP/Trivy security gate blocks release. -->
+        <profile>
+            <id>simulate-security-finding</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-text</artifactId>
+                    <version>1.9</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

@@ -1,0 +1,14 @@
+=== [TC03] Test Case: Run the container and access /health ===
+Expected Result: Application returns a healthy response.
+
+--- Step 1: Start container (chungyi1979/finsecure-pay:1.0.0) on port 18089 -> 8080 ---
+Container started: d4db873a6bb5
+--- Step 2: Probe http://localhost:18089/health ---
+HTTP 200 OK from Local Container /health:
+  {"status":"UP","service":"finsecure-pay","version":"1.0.0","environment":"local","timestamp":"2026-11-02T13:36:19.471445442Z"}
+
+--- Step 3: Probe Live AWS EKS LoadBalancer /health ---
+HTTP 200 OK from EKS LoadBalancer (http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com/health):
+  {"status":"UP","service":"finsecure-pay","version":"1.1.0-4-9ea7e21","environment":"production-eks","timestamp":"2026-11-02T13:36:23.250726617Z"}
+
+[PASS] TC03 Verified: Container started cleanly and /health returned status=UP.

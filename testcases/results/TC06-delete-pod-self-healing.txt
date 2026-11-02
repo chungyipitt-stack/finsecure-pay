@@ -1,0 +1,30 @@
+=== [TC06] Test Case: Delete or restart one pod ===
+Expected Result: Kubernetes automatically recreates the pod.
+
+--- Step 1: Pods BEFORE deletion ---
+NAME                             READY   STATUS    RESTARTS   AGE   IP              NODE                                                NOMINATED NODE   READINESS GATES
+finsecure-pay-54d99d9cf8-6cs2d   1/1     Running   0          40s   192.168.37.69   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+finsecure-pay-54d99d9cf8-r65m7   1/1     Running   0          24s   192.168.73.77   ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+
+Deleting pod: finsecure-pay-54d99d9cf8-6cs2d
+pod "finsecure-pay-54d99d9cf8-6cs2d" deleted from finsecure namespace
+
+--- Step 2: Immediate state after deletion (ReplicaSet spawns replacement pod) ---
+NAME                             READY   STATUS        RESTARTS   AGE   IP              NODE                                                NOMINATED NODE   READINESS GATES
+finsecure-pay-54d99d9cf8-6cs2d   1/1     Terminating   0          46s   192.168.37.69   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+finsecure-pay-54d99d9cf8-7d2m8   0/1     Running       0          3s    192.168.50.29   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+finsecure-pay-54d99d9cf8-r65m7   1/1     Running       0          30s   192.168.73.77   ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+
+--- Step 3: Wait for replacement pod to become Running and 1/1 Ready ---
+Waiting for deployment "finsecure-pay" rollout to finish: 1 of 2 updated replicas are available...
+deployment "finsecure-pay" successfully rolled out
+
+--- Step 4: Pods AFTER automatic self-healing recovery ---
+NAME                             READY   STATUS    RESTARTS   AGE   IP              NODE                                                NOMINATED NODE   READINESS GATES
+finsecure-pay-54d99d9cf8-7d2m8   1/1     Running   0          17s   192.168.50.29   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+finsecure-pay-54d99d9cf8-r65m7   1/1     Running   0          44s   192.168.73.77   ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+
+External /health response during/after recovery:
+  {"status":"UP","service":"finsecure-pay","version":"1.1.0-4-9ea7e21","environment":"production-eks","timestamp":"2026-11-02T13:38:07.463031283Z"}
+
+[PASS] TC06 Verified: Deleted pod 'finsecure-pay-54d99d9cf8-6cs2d' was automatically recreated by Kubernetes ReplicaSet and reached 1/1 Ready.

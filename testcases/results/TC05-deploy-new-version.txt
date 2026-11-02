@@ -1,0 +1,33 @@
+=== [TC05] Test Case: Deploy a new image/version ===
+Expected Result: Kubernetes rollout completes successfully.
+
+--- Step 1: Current /health before deploying new image ---
+  {"status":"UP","service":"finsecure-pay","version":"1.0.0","environment":"production-eks","timestamp":"2026-11-02T13:37:05.293311739Z"}
+
+--- Step 2: Deploy new image chungyi1979/finsecure-pay:1.1.0-4-9ea7e21 to EKS ---
+deployment.apps/finsecure-pay image updated
+deployment.apps/finsecure-pay annotated
+
+--- Step 3: Wait for Kubernetes rolling update to complete ---
+Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "finsecure-pay" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "finsecure-pay" rollout to finish: 1 old replicas are pending termination...
+deployment "finsecure-pay" successfully rolled out
+
+--- Step 4: Inspect Rollout History & Running Pods ---
+deployment.apps/finsecure-pay 
+REVISION  CHANGE-CAUSE
+5         Evaluation TC05 rollout to chungyi1979/finsecure-pay:1.1.0-4-9ea7e21
+6         Evaluation TC05 rollout to chungyi1979/finsecure-pay:1.1.0-4-9ea7e21
+
+NAME                             READY   STATUS        RESTARTS   AGE   IP               NODE                                                NOMINATED NODE   READINESS GATES
+finsecure-pay-54d99d9cf8-6cs2d   1/1     Running       0          35s   192.168.37.69    ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+finsecure-pay-54d99d9cf8-r65m7   1/1     Running       0          19s   192.168.73.77    ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+finsecure-pay-754c5d8fdc-phwqr   1/1     Terminating   0          53s   192.168.68.170   ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+
+--- Step 5: Verify /health reports the newly deployed version ---
+  {"status":"UP","service":"finsecure-pay","version":"1.1.0-4-9ea7e21","environment":"production-eks","timestamp":"2026-11-02T13:37:45.025539294Z"}
+
+[PASS] TC05 Verified: New image/version (1.1.0-4-9ea7e21) rolled out with zero downtime and /health confirmed the new version.

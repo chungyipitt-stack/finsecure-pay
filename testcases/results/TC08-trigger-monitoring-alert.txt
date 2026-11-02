@@ -1,0 +1,22 @@
+=== [TC08] Test Case: Trigger a monitoring condition ===
+Expected Result: Alert fires and a notification is received.
+
+--- Step 1: Send burst of rejected transactions (>50% rejection ratio over 2m window) ---
+Injected 35 rejected (HTTP 422) transactions against http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com/validate
+
+--- Step 2: Poll Prometheus on EKS for FinSecurePayHighRejectionRate ---
+  [Attempt 1] Waiting for Prometheus scrape & rule evaluation (total rejected=43)...
+  [Attempt 2] Waiting for Prometheus scrape & rule evaluation (total rejected=51)...
+  [Attempt 3] Prometheus Alert: FinSecurePayHighRejectionRate | state=pending | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+  [Attempt 4] Prometheus Alert: FinSecurePayHighRejectionRate | state=pending | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+  [Attempt 5] Prometheus Alert: FinSecurePayHighRejectionRate | state=pending | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+  [Attempt 6] Prometheus Alert: FinSecurePayHighRejectionRate | state=pending | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+  [Attempt 7] Prometheus Alert: FinSecurePayHighRejectionRate | state=pending | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+  [Attempt 8] Prometheus Alert: FinSecurePayHighRejectionRate | state=pending | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+  [Attempt 9] Prometheus Alert: FinSecurePayHighRejectionRate | state=pending | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+  [Attempt 10] Prometheus Alert: FinSecurePayHighRejectionRate | state=firing | activeAt=2026-11-02T13:49:33.276486462Z | value=1e+00
+
+--- Step 3: Query Alertmanager Active Alerts API ---
+  Alertmanager: alertname=FinSecurePayHighRejectionRate | status=active | receiver=finsecure-email | summary='More than 50% of transactions are being rejected' | description='Rejection ratio is 100% - possible fraud attack, client bug or bad config.'
+
+[PASS] TC08 Verified: Monitoring condition triggered FinSecurePayHighRejectionRate alert (state=firing) and routed email notification via receiver 'finsecure-email' to chungyi.pitt@gmail.com.

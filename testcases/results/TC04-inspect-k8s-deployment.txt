@@ -1,0 +1,15 @@
+=== [TC04] Test Case: Inspect the Kubernetes deployment ===
+Expected Result: At least two application pods are running and Ready.
+
+--- Step 1: Inspect Deployment in namespace 'finsecure' ---
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS      IMAGES                                      SELECTOR
+finsecure-pay   2/2     2            2           39h   finsecure-pay   chungyi1979/finsecure-pay:1.1.0-4-9ea7e21   app.kubernetes.io/name=finsecure-pay
+
+--- Step 2: Inspect Application Pods in namespace 'finsecure' ---
+NAME                             READY   STATUS    RESTARTS   AGE     IP              NODE                                                NOMINATED NODE   READINESS GATES
+finsecure-pay-54d99d9cf8-57xqg   1/1     Running   0          3m11s   192.168.50.29   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+finsecure-pay-54d99d9cf8-rf887   1/1     Running   0          3m37s   192.168.64.16   ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+
+Deployment Summary: desired=2, readyReplicas=2, availableReplicas=2, runningReadyPodCount=2
+
+[PASS] TC04 Verified: 2 application pods are Running and Ready (>= 2 required).
