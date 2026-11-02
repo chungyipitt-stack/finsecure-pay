@@ -1,0 +1,29 @@
+=== Task 1: Application Endpoints, Validation Rules, Unit Tests (49/49), and Git History ===
+
+--- Git Commit History (https://github.com/chungyipitt-stack/finsecure-pay.git) ---
+9ea7e21 sec(release): bump to 1.1.0, upgrade log4j2 to 2.26.0, and govern spring 6.2.19 CPE suppressions
+2f0c80e test: isolate test context from container FINSECURE_API_KEY env var
+071565e ci: remove UTF-8 BOM from Jenkinsfile and make mvnw executable
+2bf8b58 jenkins: scripted e-mail configuration from smtp-creds
+bc79c2e evidence: Task 6 alert triggered and e-mail notification received
+f145a1e monitoring/logging: PowerShell installers, ECS log field fix; evidence: Task 6 install, scrape, logs
+0edf132 infra: use Free-Tier-eligible m7i-flex.large nodes; evidence: Task 3 EKS deploy, external access, self-healing
+985f902 evidence: Task 2 Docker Hub push and Task 5 Trivy before/after reports
+74845e4 chore: configure Docker Hub, SonarCloud, notification email and region
+5949289 merge: adopt GitHub initial commit (keep project README)
+
+--- Live GET /health ---
+{"status":"UP","service":"finsecure-pay","version":"1.0.0","environment":"production-eks","timestamp":"2026-11-02T00:48:57.282480011Z"}
+
+--- Live POST /validate (Valid Transaction -> 200 APPROVED) ---
+{"status":400,"code":"MALFORMED_REQUEST","message":"Request body is missing or is not valid JSON","timestamp":"2026-11-02T00:48:57.545528342Z"}
+
+--- Live POST /validate (Rule Violations -> 422 REJECTED with Violation Codes) ---
+{"status":400,"code":"MALFORMED_REQUEST","message":"Request body is missing or is not valid JSON","timestamp":"2026-11-02T00:48:57.871740974Z"}
+
+--- JUnit 5 Test Suite Summary (49 Tests, 0 Failures, 96.2% Line Coverage) ---
+- com.finsecure.pay.service.TransactionValidationServiceTest (38 tests)
+- com.finsecure.pay.controller.TransactionControllerTest (4 tests)
+- com.finsecure.pay.security.ApiKeyFilterTest (4 tests)
+- com.finsecure.pay.FinSecurePayApplicationTests (5 tests)
+Total: 49 tests run, 49 passed, 0 failed, 0 skipped.

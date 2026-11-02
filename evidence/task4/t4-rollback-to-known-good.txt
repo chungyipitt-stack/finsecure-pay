@@ -1,0 +1,248 @@
+=== Jenkins Build #5: Automated Rollback to Known-Good Release (1.0.0) ===
+
+Build #5 status=SUCCESS duration=59s
+  Declarative: Checkout SCM    SUCCESS          1s
+  Checkout                     SUCCESS          5s
+  Build                        NOT_EXECUTED     0s
+  Unit Test                    NOT_EXECUTED     0s
+  Code Quality - SonarCloud    NOT_EXECUTED     0s
+  Dependency Scan - OWASP      NOT_EXECUTED     0s
+  Package                      NOT_EXECUTED     0s
+  Container Build              NOT_EXECUTED     0s
+  Image Scan - Trivy           NOT_EXECUTED     0s
+  Push - Docker Hub            NOT_EXECUTED     0s
+  Deploy - EKS                 NOT_EXECUTED     0s
+  Rollback - EKS               SUCCESS         39s
+  Smoke Test                   SUCCESS          1s
+  Declarative: Post Actions    SUCCESS          7s
+
+=== Live EKS Rollout History After Rollback ===
+deployment.apps/finsecure-pay 
+REVISION  CHANGE-CAUSE
+2         Jenkins build 4 deployed 1.1.0-4-9ea7e21
+3         Jenkins build 5 ROLLBACK to 1.0.0
+
+
+=== Live External LoadBalancer /health Response After Rollback ===
+GET http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com/health
+{"status":"UP","service":"finsecure-pay","version":"1.0.0","environment":"production-eks","timestamp":"2026-11-02T00:48:18.954001018Z"}
+
+=== Jenkins Build #5 Console Log ===
+Started by user admin
+Checking out git https://github.com/chungyipitt-stack/finsecure-pay.git into /var/jenkins_home/workspace/finsecure-pay@script/776a5d7ba2ff926d5adb33061366c92b7b92ee99b7b6e183909d3318acbb3af6 to read Jenkinsfile
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/finsecure-pay@script/776a5d7ba2ff926d5adb33061366c92b7b92ee99b7b6e183909d3318acbb3af6/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/chungyipitt-stack/finsecure-pay.git # timeout=10
+Fetching upstream changes from https://github.com/chungyipitt-stack/finsecure-pay.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/chungyipitt-stack/finsecure-pay.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 9ea7e21c38715834c07cbd7ce0408aec7b9be261 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 9ea7e21c38715834c07cbd7ce0408aec7b9be261 # timeout=10
+Commit message: "sec(release): bump to 1.1.0, upgrade log4j2 to 2.26.0, and govern spring 6.2.19 CPE suppressions"
+ > git rev-list --no-walk 9ea7e21c38715834c07cbd7ce0408aec7b9be261 # timeout=10
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/finsecure-pay
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/finsecure-pay/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/chungyipitt-stack/finsecure-pay.git # timeout=10
+Fetching upstream changes from https://github.com/chungyipitt-stack/finsecure-pay.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/chungyipitt-stack/finsecure-pay.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 9ea7e21c38715834c07cbd7ce0408aec7b9be261 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 9ea7e21c38715834c07cbd7ce0408aec7b9be261 # timeout=10
+Commit message: "sec(release): bump to 1.1.0, upgrade log4j2 to 2.26.0, and govern spring 6.2.19 CPE suppressions"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] timeout
+[2026-11-02T00:46:48.117Z] Timeout set to expire in 1 hr 0 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+[2026-11-02T00:46:48.219Z] The recommended git tool is: NONE
+[2026-11-02T00:46:48.219Z] No credentials specified
+[2026-11-02T00:46:48.219Z]  > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/finsecure-pay/.git # timeout=10
+[2026-11-02T00:46:48.224Z] Fetching changes from the remote Git repository
+[2026-11-02T00:46:48.224Z]  > git config remote.origin.url https://github.com/chungyipitt-stack/finsecure-pay.git # timeout=10
+[2026-11-02T00:46:48.231Z] Fetching upstream changes from https://github.com/chungyipitt-stack/finsecure-pay.git
+[2026-11-02T00:46:48.231Z]  > git --version # timeout=10
+[2026-11-02T00:46:48.235Z]  > git --version # 'git version 2.47.3'
+[2026-11-02T00:46:48.235Z]  > git fetch --tags --force --progress -- https://github.com/chungyipitt-stack/finsecure-pay.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+[2026-11-02T00:46:48.997Z]  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+[2026-11-02T00:46:49.003Z] Checking out Revision 9ea7e21c38715834c07cbd7ce0408aec7b9be261 (refs/remotes/origin/main)
+[2026-11-02T00:46:49.003Z]  > git config core.sparsecheckout # timeout=10
+[2026-11-02T00:46:49.009Z]  > git checkout -f 9ea7e21c38715834c07cbd7ce0408aec7b9be261 # timeout=10
+[2026-11-02T00:46:49.017Z] Commit message: "sec(release): bump to 1.1.0, upgrade log4j2 to 2.26.0, and govern spring 6.2.19 CPE suppressions"
+[Pipeline] sh
+[2026-11-02T00:46:49.306Z] + chmod +x mvnw
+[2026-11-02T00:46:49.306Z] + git log -1 --pretty=Commit %h by %an: %s
+[2026-11-02T00:46:49.306Z] Commit 9ea7e21 by Chungyi: sec(release): bump to 1.1.0, upgrade log4j2 to 2.26.0, and govern spring 6.2.19 CPE suppressions
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
+[2026-11-02T00:46:49.735Z] + git rev-parse --short HEAD
+[Pipeline] sh
+[2026-11-02T00:46:50.019Z] + ./mvnw -q help:evaluate -Dexpression=project.version -DforceStdout
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+Stage "Build" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Unit Test)
+Stage "Unit Test" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Code Quality - SonarCloud)
+Stage "Code Quality - SonarCloud" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Dependency Scan - OWASP)
+Stage "Dependency Scan - OWASP" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Package)
+Stage "Package" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Container Build)
+Stage "Container Build" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Image Scan - Trivy)
+Stage "Image Scan - Trivy" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push - Docker Hub)
+Stage "Push - Docker Hub" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy - EKS)
+Stage "Deploy - EKS" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Rollback - EKS)
+[Pipeline] withCredentials
+[2026-11-02T00:46:54.486Z] Masking supported pattern matches of $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
+[2026-11-02T00:46:54.785Z] + aws eks update-kubeconfig --region ap-southeast-1 --name finsecure-eks --kubeconfig ./kubeconfig
+[2026-11-02T00:46:56.129Z] Added new context arn:aws:eks:ap-southeast-1:556192200922:cluster/finsecure-eks to /var/jenkins_home/workspace/finsecure-pay/kubeconfig
+[2026-11-02T00:46:56.129Z] + export KUBECONFIG=./kubeconfig
+[2026-11-02T00:46:56.129Z] + echo --- History before rollback ---
+[2026-11-02T00:46:56.129Z] --- History before rollback ---
+[2026-11-02T00:46:56.129Z] + kubectl -n finsecure rollout history deployment/finsecure-pay
+[2026-11-02T00:46:57.992Z] deployment.apps/finsecure-pay 
+[2026-11-02T00:46:57.992Z] REVISION  CHANGE-CAUSE
+[2026-11-02T00:46:57.992Z] 1         Initial manual deploy of 1.0.0
+[2026-11-02T00:46:57.992Z] 2         Jenkins build 4 deployed 1.1.0-4-9ea7e21
+[2026-11-02T00:46:57.992Z] 
+[2026-11-02T00:46:57.992Z] + [ -n 1.0.0 ]
+[2026-11-02T00:46:57.992Z] + kubectl -n finsecure set image deployment/finsecure-pay finsecure-pay=chungyi1979/finsecure-pay:1.0.0
+[2026-11-02T00:46:59.858Z] deployment.apps/finsecure-pay image updated
+[2026-11-02T00:46:59.858Z] + kubectl -n finsecure annotate deployment/finsecure-pay --overwrite kubernetes.io/change-cause=Jenkins build 5 ROLLBACK to 1.0.0
+[2026-11-02T00:47:01.201Z] deployment.apps/finsecure-pay annotated
+[2026-11-02T00:47:01.201Z] + kubectl -n finsecure rollout status deployment/finsecure-pay --timeout=180s
+[2026-11-02T00:47:02.545Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-02T00:47:17.308Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-02T00:47:17.308Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-02T00:47:17.308Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 old replicas are pending termination...
+[2026-11-02T00:47:32.070Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 old replicas are pending termination...
+[2026-11-02T00:47:32.070Z] deployment "finsecure-pay" successfully rolled out
+[2026-11-02T00:47:32.070Z] + echo --- History after rollback ---
+[2026-11-02T00:47:32.070Z] --- History after rollback ---
+[2026-11-02T00:47:32.070Z] + kubectl -n finsecure rollout history deployment/finsecure-pay
+[2026-11-02T00:47:33.414Z] deployment.apps/finsecure-pay 
+[2026-11-02T00:47:33.414Z] REVISION  CHANGE-CAUSE
+[2026-11-02T00:47:33.414Z] 2         Jenkins build 4 deployed 1.1.0-4-9ea7e21
+[2026-11-02T00:47:33.414Z] 3         Jenkins build 5 ROLLBACK to 1.0.0
+[2026-11-02T00:47:33.414Z] 
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Smoke Test)
+[Pipeline] withCredentials
+[2026-11-02T00:47:33.644Z] Masking supported pattern matches of $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
+[2026-11-02T00:47:33.963Z] + export KUBECONFIG=./kubeconfig
+[2026-11-02T00:47:33.963Z] + kubectl -n finsecure get svc finsecure-pay -o jsonpath={.status.loadBalancer.ingress[0].hostname}
+[2026-11-02T00:47:34.877Z] + HOST=a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com
+[2026-11-02T00:47:34.877Z] + echo External endpoint: http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com
+[2026-11-02T00:47:34.877Z] External endpoint: http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com
+[2026-11-02T00:47:34.877Z] + seq 1 30
+[2026-11-02T00:47:34.877Z] + curl -fsS --max-time 5 http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com/health
+[2026-11-02T00:47:34.877Z] {"status":"UP","service":"finsecure-pay","version":"1.0.0","environment":"production-eks","timestamp":"2026-11-02T00:47:34.772971677Z"}+ echo
+[2026-11-02T00:47:34.877Z] 
+[2026-11-02T00:47:34.877Z] + exit 0
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
+[2026-11-02T00:47:35.371Z] + rm -f kubeconfig
+[Pipeline] sh
+[2026-11-02T00:47:35.666Z] + docker image prune -f
+[2026-11-02T00:47:35.666Z] Total reclaimed space: 0B
+[Pipeline] emailext
+[2026-11-02T00:47:35.731Z] Sending email to: chungyi.pitt@gmail.com
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

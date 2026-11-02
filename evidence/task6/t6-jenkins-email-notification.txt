@@ -1,0 +1,25 @@
+=== Task 6: Jenkins Pipeline Email Notifications (FAILURE & SUCCESS) ===
+
+--- Build #2 (FAILED Pipeline -> Failure Email Notification) ---
+
+  [2026-11-02T00:07:22.789Z] 
+  [2026-11-02T00:07:22.789Z] Total reclaimed space: 140.6MB
+> [Pipeline] emailext
+> [2026-11-02T00:07:23.012Z] Sending email to: chungyi.pitt@gmail.com
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] }
+
+
+
+--- Build #4 (SUCCESS Pipeline -> Success Email Notification) ---
+
+  [2026-11-02T00:45:23.517Z] + docker image prune -f
+  [2026-11-02T00:45:23.517Z] Total reclaimed space: 0B
+> [Pipeline] emailext
+> [2026-11-02T00:45:24.281Z] Sending email to: chungyi.pitt@gmail.com
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] }
+
+

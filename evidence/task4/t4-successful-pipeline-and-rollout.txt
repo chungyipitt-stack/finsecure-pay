@@ -1,0 +1,173 @@
+=== Jenkins Build #4: Full End-to-End CI/CD Pipeline & Version 1.1.0 Rollout ===
+
+Build #4 status=SUCCESS duration=422s
+  Declarative: Checkout SCM    SUCCESS          1s
+  Checkout                     SUCCESS         10s
+  Build                        SUCCESS          6s
+  Unit Test                    SUCCESS         13s
+  Code Quality - SonarCloud    SUCCESS         56s
+  Dependency Scan - OWASP      SUCCESS         13s
+  Package                      SUCCESS          9s
+  Container Build              SUCCESS         27s
+  Image Scan - Trivy           SUCCESS        150s
+  Push - Docker Hub            SUCCESS         55s
+  Deploy - EKS                 SUCCESS         62s
+  Rollback - EKS               NOT_EXECUTED     1s
+  Smoke Test                   SUCCESS          2s
+  Declarative: Post Actions    SUCCESS          6s
+
+=== Live EKS Rollout History & Running Pods ===
+deployment.apps/finsecure-pay 
+REVISION  CHANGE-CAUSE
+1         Initial manual deploy of 1.0.0
+2         Jenkins build 4 deployed 1.1.0-4-9ea7e21
+
+
+NAME                             READY   STATUS    RESTARTS   AGE   IP               NODE                                                NOMINATED NODE   READINESS GATES
+finsecure-pay-54d99d9cf8-fchsg   1/1     Running   0          72s   192.168.85.13    ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+finsecure-pay-54d99d9cf8-kgwcq   1/1     Running   0          98s   192.168.50.142   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+
+=== Live External LoadBalancer /health Response ===
+GET http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com/health
+{"status":"UP","service":"finsecure-pay","version":"1.1.0-4-9ea7e21","environment":"production-eks","timestamp":"2026-11-02T00:46:08.701691786Z"}
+
+=== Jenkins Build #4 Console Log (Tail: Push, EKS Deploy, Smoke Test, Email) ===
+[2026-11-02T00:44:17.089Z] 1a4ad63dfbce: Waiting
+[2026-11-02T00:44:17.089Z] c25de969c6d2: Waiting
+[2026-11-02T00:44:17.089Z] 11d552fe703d: Waiting
+[2026-11-02T00:44:17.089Z] 7b229517ed22: Layer already exists
+[2026-11-02T00:44:17.089Z] fe426ef558f8: Waiting
+[2026-11-02T00:44:17.089Z] 1a4ad63dfbce: Waiting
+[2026-11-02T00:44:17.089Z] c25de969c6d2: Waiting
+[2026-11-02T00:44:17.089Z] 11d552fe703d: Waiting
+[2026-11-02T00:44:17.089Z] ff43a15a751e: Waiting
+[2026-11-02T00:44:17.089Z] 30414a79ff6e: Waiting
+[2026-11-02T00:44:17.089Z] 8774bed404aa: Waiting
+[2026-11-02T00:44:17.089Z] f40b8dc79a84: Waiting
+[2026-11-02T00:44:17.089Z] ff43a15a751e: Waiting
+[2026-11-02T00:44:17.089Z] 30414a79ff6e: Waiting
+[2026-11-02T00:44:17.089Z] 8774bed404aa: Layer already exists
+[2026-11-02T00:44:17.089Z] f40b8dc79a84: Waiting
+[2026-11-02T00:44:17.089Z] fe426ef558f8: Waiting
+[2026-11-02T00:44:17.089Z] 1a4ad63dfbce: Waiting
+[2026-11-02T00:44:17.089Z] c25de969c6d2: Layer already exists
+[2026-11-02T00:44:17.089Z] 11d552fe703d: Waiting
+[2026-11-02T00:44:17.089Z] ff43a15a751e: Waiting
+[2026-11-02T00:44:17.089Z] 30414a79ff6e: Waiting
+[2026-11-02T00:44:17.089Z] f40b8dc79a84: Waiting
+[2026-11-02T00:44:17.089Z] fe426ef558f8: Waiting
+[2026-11-02T00:44:17.089Z] 1a4ad63dfbce: Waiting
+[2026-11-02T00:44:17.089Z] 11d552fe703d: Waiting
+[2026-11-02T00:44:17.089Z] 11d552fe703d: Waiting
+[2026-11-02T00:44:17.089Z] ff43a15a751e: Already exists
+[2026-11-02T00:44:17.089Z] 30414a79ff6e: Waiting
+[2026-11-02T00:44:17.089Z] f40b8dc79a84: Waiting
+[2026-11-02T00:44:17.089Z] fe426ef558f8: Layer already exists
+[2026-11-02T00:44:17.089Z] 1a4ad63dfbce: Waiting
+[2026-11-02T00:44:17.089Z] 30414a79ff6e: Layer already exists
+[2026-11-02T00:44:17.089Z] f40b8dc79a84: Layer already exists
+[2026-11-02T00:44:17.089Z] 1a4ad63dfbce: Layer already exists
+[2026-11-02T00:44:17.089Z] 11d552fe703d: Layer already exists
+[2026-11-02T00:44:17.341Z] latest: digest: sha256:129c58ca3772e3fdf4756063d56814ed44bd9ce38dc90d265f99faf67b36629c size: 856
+[2026-11-02T00:44:17.341Z] + docker logout
+[2026-11-02T00:44:17.342Z] Removing login credentials for https://index.docker.io/v1/
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy - EKS)
+[Pipeline] withCredentials
+[2026-11-02T00:44:18.152Z] Masking supported pattern matches of $AWS_SECRET_ACCESS_KEY or $FINSECURE_API_KEY
+[Pipeline] {
+[Pipeline] sh
+[2026-11-02T00:44:18.523Z] + aws eks update-kubeconfig --region ap-southeast-1 --name finsecure-eks --kubeconfig ./kubeconfig
+[2026-11-02T00:44:19.870Z] Added new context arn:aws:eks:ap-southeast-1:556192200922:cluster/finsecure-eks to /var/jenkins_home/workspace/finsecure-pay/kubeconfig
+[2026-11-02T00:44:20.122Z] + export KUBECONFIG=./kubeconfig
+[2026-11-02T00:44:20.122Z] + kubectl apply -f k8s/00-namespace.yaml
+[2026-11-02T00:44:24.253Z] namespace/finsecure unchanged
+[2026-11-02T00:44:24.253Z] + kubectl apply -f k8s/10-configmap.yaml
+[2026-11-02T00:44:24.807Z] configmap/finsecure-pay-config unchanged
+[2026-11-02T00:44:24.808Z] + kubectl apply -f -
+[2026-11-02T00:44:24.808Z] + kubectl -n finsecure create secret generic finsecure-pay-secrets --from-literal=FINSECURE_API_KEY=**** --dry-run=client -o yaml
+[2026-11-02T00:44:27.294Z] secret/finsecure-pay-secrets unchanged
+[2026-11-02T00:44:27.294Z] + sed -e s|IMAGE_PLACEHOLDER|chungyi1979/finsecure-pay:1.1.0-4-9ea7e21| -e s|CHANGE_CAUSE_PLACEHOLDER|Jenkins build 4 deployed 1.1.0-4-9ea7e21| k8s/20-deployment.yaml
+[2026-11-02T00:44:27.295Z] + kubectl apply -f -
+[2026-11-02T00:44:30.526Z] deployment.apps/finsecure-pay configured
+[2026-11-02T00:44:30.526Z] + kubectl apply -f k8s/30-service.yaml
+[2026-11-02T00:44:31.440Z] service/finsecure-pay unchanged
+[2026-11-02T00:44:31.691Z] poddisruptionbudget.policy/finsecure-pay configured
+[2026-11-02T00:44:31.691Z] + kubectl apply -f k8s/40-monitoring.yaml
+[2026-11-02T00:44:34.178Z] servicemonitor.monitoring.coreos.com/finsecure-pay unchanged
+[2026-11-02T00:44:34.178Z] prometheusrule.monitoring.coreos.com/finsecure-pay-alerts unchanged
+[2026-11-02T00:44:34.178Z] + kubectl -n finsecure rollout status deployment/finsecure-pay --timeout=180s
+[2026-11-02T00:44:35.089Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-02T00:44:56.897Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-02T00:44:56.897Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 out of 2 new replicas have been updated...
+[2026-11-02T00:44:56.897Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 old replicas are pending termination...
+[2026-11-02T00:45:18.700Z] Waiting for deployment "finsecure-pay" rollout to finish: 1 old replicas are pending termination...
+[2026-11-02T00:45:18.700Z] deployment "finsecure-pay" successfully rolled out
+[2026-11-02T00:45:18.700Z] + kubectl -n finsecure rollout history deployment/finsecure-pay
+[2026-11-02T00:45:18.700Z] deployment.apps/finsecure-pay 
+[2026-11-02T00:45:18.700Z] REVISION  CHANGE-CAUSE
+[2026-11-02T00:45:18.700Z] 1         Initial manual deploy of 1.0.0
+[2026-11-02T00:45:18.700Z] 2         Jenkins build 4 deployed 1.1.0-4-9ea7e21
+[2026-11-02T00:45:18.700Z] 
+[2026-11-02T00:45:18.700Z] + kubectl -n finsecure get pods -o wide
+[2026-11-02T00:45:19.251Z] NAME                             READY   STATUS        RESTARTS   AGE   IP               NODE                                                NOMINATED NODE   READINESS GATES
+[2026-11-02T00:45:19.251Z] finsecure-pay-54d99d9cf8-fchsg   1/1     Running       0          24s   192.168.85.13    ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+[2026-11-02T00:45:19.251Z] finsecure-pay-54d99d9cf8-kgwcq   1/1     Running       0          50s   192.168.50.142   ip-192-168-57-78.ap-southeast-1.compute.internal    <none>           <none>
+[2026-11-02T00:45:19.251Z] finsecure-pay-754c5d8fdc-t8w7x   1/1     Terminating   0          26h   192.168.64.16    ip-192-168-66-201.ap-southeast-1.compute.internal   <none>           <none>
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Rollback - EKS)
+Stage "Rollback - EKS" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Smoke Test)
+[Pipeline] withCredentials
+[2026-11-02T00:45:20.748Z] Masking supported pattern matches of $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
+[2026-11-02T00:45:21.195Z] + export KUBECONFIG=./kubeconfig
+[2026-11-02T00:45:21.195Z] + kubectl -n finsecure get svc finsecure-pay -o jsonpath={.status.loadBalancer.ingress[0].hostname}
+[2026-11-02T00:45:21.747Z] + HOST=a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com
+[2026-11-02T00:45:21.747Z] + echo External endpoint: http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com
+[2026-11-02T00:45:21.747Z] External endpoint: http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com
+[2026-11-02T00:45:21.747Z] + seq 1 30
+[2026-11-02T00:45:21.747Z] + curl -fsS --max-time 5 http://a67e1d0b5b459453d9d9be62e598e148-a0206fab5a570f79.elb.ap-southeast-1.amazonaws.com/health
+[2026-11-02T00:45:22.299Z] {"status":"UP","service":"finsecure-pay","version":"1.1.0-4-9ea7e21","environment":"production-eks","timestamp":"2026-11-02T00:45:22.174078690Z"}+ echo
+[2026-11-02T00:45:22.299Z] 
+[2026-11-02T00:45:22.299Z] + exit 0
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
+[2026-11-02T00:45:23.197Z] + rm -f kubeconfig
+[Pipeline] sh
+[2026-11-02T00:45:23.517Z] + docker image prune -f
+[2026-11-02T00:45:23.517Z] Total reclaimed space: 0B
+[Pipeline] emailext
+[2026-11-02T00:45:24.281Z] Sending email to: chungyi.pitt@gmail.com
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
