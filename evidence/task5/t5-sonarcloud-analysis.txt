@@ -1,0 +1,151 @@
+=== SonarCloud Static Code Analysis & Quality Gate (Jenkins Build #3) ===
+Dashboard: https://sonarcloud.io/project/overview?id=chungyipitt-stack_finsecure-pay
+
+--- Jenkins Scanner Console Output ---
+
+  [Pipeline] sh
+> [2026-11-02T00:10:24.755Z] + ./mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.8.0.7211:sonar -Dsonar
+.organization=chungyipitt-stack -Dsonar.projectKey=chungyipitt-stack_finsecure-pay -Dsonar.token=**** -Dsonar.qualityga
+te.wait=true -Dsonar.qualitygate.timeout=300
+  [2026-11-02T00:10:25.670Z] [INFO] Scanning for projects...
+  [2026-11-02T00:10:27.016Z] [INFO] 
+  [2026-11-02T00:10:27.016Z] [INFO] --------------------< com.finsecure:finsecure-pay >---------------------
+  [2026-11-02T00:10:27.016Z] [INFO] Building finsecure-pay 1.0.0
+  [2026-11-02T00:10:27.016Z] [INFO]   from pom.xml
+  [2026-11-02T00:10:27.016Z] [INFO] --------------------------------[ jar ]---------------------------------
+  [2026-11-02T00:12:10.566Z] [INFO] Sensor cache published successfully
+> [2026-11-02T00:12:10.566Z] [INFO] ------------- Check Quality Gate status
+  [2026-11-02T00:12:10.566Z] [INFO] Waiting for the analysis report to be processed (max 300s)
+> [2026-11-02T00:12:11.117Z] [INFO] QUALITY GATE STATUS: PASSED - View details on https://sonarcloud.io/dashboard?id=ch
+ungyipitt-stack_finsecure-pay
+  [2026-11-02T00:12:12.032Z] [INFO] Analysis total time: 1:20.159 min
+  [2026-11-02T00:12:12.032Z] [INFO] SonarScanner Engine completed successfully
+  [2026-11-02T00:12:12.283Z] [INFO] ------------------------------------------------------------------------
+  [2026-11-02T00:12:12.283Z] [INFO] BUILD SUCCESS
+  [2026-11-02T00:12:12.284Z] [INFO] ------------------------------------------------------------------------
+  [2026-11-02T00:12:12.284Z] [INFO] Total time:  01:46 min
+
+
+
+--- SonarCloud Quality Gate API Status ---
+{
+    "projectStatus":  {
+                          "status":  "OK",
+                          "conditions":  [
+                                             {
+                                                 "status":  "OK",
+                                                 "metricKey":  "new_reliability_rating",
+                                                 "comparator":  "GT",
+                                                 "periodIndex":  1,
+                                                 "errorThreshold":  "1",
+                                                 "actualValue":  "1"
+                                             },
+                                             {
+                                                 "status":  "OK",
+                                                 "metricKey":  "new_security_rating",
+                                                 "comparator":  "GT",
+                                                 "periodIndex":  1,
+                                                 "errorThreshold":  "1",
+                                                 "actualValue":  "1"
+                                             },
+                                             {
+                                                 "status":  "OK",
+                                                 "metricKey":  "new_maintainability_rating",
+                                                 "comparator":  "GT",
+                                                 "periodIndex":  1,
+                                                 "errorThreshold":  "1",
+                                                 "actualValue":  "1"
+                                             },
+                                             {
+                                                 "status":  "OK",
+                                                 "metricKey":  "new_duplicated_lines_density",
+                                                 "comparator":  "GT",
+                                                 "periodIndex":  1,
+                                                 "errorThreshold":  "3",
+                                                 "actualValue":  "0.0"
+                                             },
+                                             {
+                                                 "status":  "OK",
+                                                 "metricKey":  "new_security_hotspots_reviewed",
+                                                 "comparator":  "LT",
+                                                 "periodIndex":  1,
+                                                 "errorThreshold":  "100",
+                                                 "actualValue":  "100.0"
+                                             }
+                                         ],
+                          "periods":  [
+                                          {
+                                              "index":  1,
+                                              "mode":  "previous_version",
+                                              "date":  "2026-10-31T23:16:14+0000"
+                                          }
+                                      ],
+                          "ignoredConditions":  false
+                      }
+}
+
+--- SonarCloud Component Measures API ---
+{
+    "component":  {
+                      "id":  "AaGUP6QV8JWW6OUFwyIw",
+                      "key":  "chungyipitt-stack_finsecure-pay",
+                      "name":  "finsecure-pay",
+                      "description":  "FinSecure Pay - Transaction Validation API",
+                      "qualifier":  "TRK",
+                      "measures":  [
+                                       {
+                                           "metric":  "coverage",
+                                           "value":  "96.2",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "reliability_rating",
+                                           "value":  "1.0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "alert_status",
+                                           "value":  "OK"
+                                       },
+                                       {
+                                           "metric":  "bugs",
+                                           "value":  "0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "duplicated_lines_density",
+                                           "value":  "0.0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "code_smells",
+                                           "value":  "0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "security_rating",
+                                           "value":  "1.0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "ncloc",
+                                           "value":  "480"
+                                       },
+                                       {
+                                           "metric":  "vulnerabilities",
+                                           "value":  "0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "security_hotspots",
+                                           "value":  "0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "sqale_rating",
+                                           "value":  "1.0",
+                                           "bestValue":  true
+                                       }
+                                   ]
+                  }
+}

@@ -8,12 +8,14 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress until="2026-12-31Z">
         <notes><![CDATA[
-        spring-webmvc 6.2.19: CVE-2026-47884 (XsltView) and CVE-2026-47890 (SSE view rendering).
-        Fixed only in Spring Framework 7.0.9 / Spring Boot 4. The API uses neither XsltView nor SSE views.
-        Accepted until 2026-12-31 pending Spring Boot 4 migration. Mirrors .trivyignore.
+        Spring Framework 6.2.19 (latest OSS 6.2.x release in Spring Boot 3.5.16):
+        NVD assigns the broad product CPE cpe:2.3:a:vmware:spring_framework:6.2.19 across all
+        org.springframework:spring-* jars for advisories fixed only in Spring Framework 7.0.x / Spring Boot 4
+        (XsltView, SSE view rendering, WebFlux, RSocket, STOMP). FinSecure Pay is a stateless servlet JSON API
+        (/health, /validate) using none of those features. Formally accepted until 2026-12-31 pending
+        Spring Boot 4 migration. Mirrors .trivyignore.
         ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-webmvc@.*$</packageUrl>
-        <cve>CVE-2026-47884</cve>
-        <cve>CVE-2026-47890</cve>
+        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-.*@6\.2\.19$</packageUrl>
+        <vulnerabilityName regex="true">^CVE-2026-(4788[3-9]|4789[0-3]|5928[0-3]|5931[3-4])$</vulnerabilityName>
     </suppress>
 </suppressions>

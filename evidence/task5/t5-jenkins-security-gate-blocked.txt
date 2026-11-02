@@ -1,0 +1,143 @@
+=== Jenkins Build #3: Blocked by OWASP Dependency-Check Security Gate (CVSS >= 7.0) ===
+
+Build #3 status=FAILED duration=670s
+  Declarative: Checkout SCM    SUCCESS          1s
+  Checkout                     SUCCESS          5s
+  Build                        SUCCESS          3s
+  Unit Test                    SUCCESS         11s
+  Code Quality - SonarCloud    SUCCESS        110s
+  Dependency Scan - OWASP      FAILED         524s
+  Package                      FAILED           0s
+  Container Build              FAILED           0s
+  Image Scan - Trivy           FAILED           0s
+  Push - Docker Hub            FAILED           0s
+  Deploy - EKS                 FAILED           0s
+  Rollback - EKS               FAILED           0s
+  Smoke Test                   FAILED           0s
+  Declarative: Post Actions    SUCCESS          7s
+
+=== OWASP Dependency-Check Failure & Blocked Downstream Stages ===
+[2026-11-02T00:20:51.479Z] [INFO] Finished Version Filter Analyzer (0 seconds)
+[2026-11-02T00:20:53.344Z] [INFO] Created CPE Index (1 seconds)
+[2026-11-02T00:20:53.595Z] [INFO] Finished CPE Analyzer (2 seconds)
+[2026-11-02T00:20:53.595Z] [INFO] Finished False Positive Analyzer (0 seconds)
+[2026-11-02T00:20:53.847Z] [INFO] Finished NVD CVE Analyzer (0 seconds)
+[2026-11-02T00:20:53.847Z] [INFO] Finished Vulnerability Suppression Analyzer (0 seconds)
+[2026-11-02T00:20:53.847Z] [INFO] Finished Known Exploited Vulnerability Analyzer (0 seconds)
+[2026-11-02T00:20:53.847Z] [INFO] Finished Dependency Bundling Analyzer (0 seconds)
+[2026-11-02T00:20:53.847Z] [INFO] Finished Unused Suppression Rule Analyzer (0 seconds)
+[2026-11-02T00:20:53.847Z] [INFO] Analysis Complete (3 seconds)
+[2026-11-02T00:20:54.098Z] [INFO] Writing XML report to: /var/jenkins_home/workspace/finsecure-pay/target/dependency-check-report.xml
+[2026-11-02T00:20:54.350Z] [INFO] Writing HTML report to: /var/jenkins_home/workspace/finsecure-pay/target/dependency-check-report.html
+[2026-11-02T00:20:54.600Z] [INFO] Writing JSON report to: /var/jenkins_home/workspace/finsecure-pay/target/dependency-check-report.json
+[2026-11-02T00:20:54.600Z] [WARNING] 
+[2026-11-02T00:20:54.601Z] 
+[2026-11-02T00:20:54.601Z] One or more dependencies were identified with known vulnerabilities in finsecure-pay:
+[2026-11-02T00:20:54.601Z] 
+[2026-11-02T00:20:54.601Z] log4j-api-2.24.3.jar (pkg:maven/org.apache.logging.log4j/log4j-api@2.24.3, cpe:2.3:a:apache:log4j:2.24.3:*:*:*:*:*:*:*) : CVE-2026-34479, CVE-2026-34477, CVE-2026-49844
+[2026-11-02T00:20:54.601Z] spring-core-6.2.19.jar (pkg:maven/org.springframework/spring-core@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*) : CVE-2026-47884, CVE-2026-47890, CVE-2026-47891, CVE-2026-47892, CVE-2026-59313, CVE-2026-59283, CVE-2026-47885, CVE-2026-47886, CVE-2026-47888, CVE-2026-47889, CVE-2026-47893, CVE-2026-59282, CVE-2026-47883, CVE-2026-47887, CVE-2026-59281, CVE-2026-59280, CVE-2026-59314
+[2026-11-02T00:20:54.601Z] spring-webmvc-6.2.19.jar (pkg:maven/org.springframework/spring-webmvc@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*) : CVE-2026-47891, CVE-2026-47892, CVE-2026-59313, CVE-2026-59283, CVE-2026-47885, CVE-2026-47886, CVE-2026-47888, CVE-2026-47889, CVE-2026-47893, CVE-2026-59282, CVE-2026-47883, CVE-2026-47887, CVE-2026-59281, CVE-2026-59280, CVE-2026-59314
+[2026-11-02T00:20:54.601Z] 
+[2026-11-02T00:20:54.601Z] 
+[2026-11-02T00:20:54.601Z] See the dependency-check report for more details.
+[2026-11-02T00:20:54.601Z] 
+[2026-11-02T00:20:54.601Z] 
+[2026-11-02T00:20:54.852Z] [INFO] ------------------------------------------------------------------------
+[2026-11-02T00:20:54.852Z] [INFO] BUILD FAILURE
+[2026-11-02T00:20:54.852Z] [INFO] ------------------------------------------------------------------------
+[2026-11-02T00:20:54.853Z] [INFO] Total time:  08:38 min
+[2026-11-02T00:20:54.853Z] [INFO] Finished at: 2026-11-02T00:20:54Z
+[2026-11-02T00:20:54.853Z] [INFO] ------------------------------------------------------------------------
+[2026-11-02T00:20:54.853Z] [ERROR] Failed to execute goal org.owasp:dependency-check-maven:13.0.0:check (default-cli) on project finsecure-pay: 
+[2026-11-02T00:20:54.853Z] [ERROR] 
+[2026-11-02T00:20:54.853Z] [ERROR] One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '7.0': 
+[2026-11-02T00:20:54.853Z] [ERROR] 
+[2026-11-02T00:20:54.853Z] [ERROR] log4j-api-2.24.3.jar (pkg:maven/org.apache.logging.log4j/log4j-api@2.24.3, cpe:2.3:a:apache:log4j:2.24.3:*:*:*:*:*:*:*): CVE-2026-34479(6.9)
+[2026-11-02T00:20:54.853Z] [ERROR] spring-core-6.2.19.jar (pkg:maven/org.springframework/spring-core@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*): CVE-2026-47885(7.5), CVE-2026-47884(9.8), CVE-2026-47886(7.5), CVE-2026-47892(9.8), CVE-2026-47891(9.8), CVE-2026-47893(7.5), CVE-2026-47890(9.8), CVE-2026-59313(9.8), CVE-2026-59283(9.1), CVE-2026-47889(7.5), CVE-2026-47888(7.5), CVE-2026-59282(7.5)
+[2026-11-02T00:20:54.853Z] [ERROR] spring-webmvc-6.2.19.jar (pkg:maven/org.springframework/spring-webmvc@6.2.19, cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*, cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*): CVE-2026-47885(7.5), CVE-2026-47886(7.5), CVE-2026-47892(9.8), CVE-2026-47891(9.8), CVE-2026-47893(7.5), CVE-2026-59313(9.8), CVE-2026-59283(9.1), CVE-2026-47889(7.5), CVE-2026-47888(7.5), CVE-2026-59282(7.5)
+[2026-11-02T00:20:54.853Z] [ERROR] 
+[2026-11-02T00:20:54.853Z] [ERROR] See the dependency-check report for more details.
+[2026-11-02T00:20:54.853Z] [ERROR] -> [Help 1]
+[2026-11-02T00:20:54.853Z] [ERROR] 
+[2026-11-02T00:20:54.853Z] [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[2026-11-02T00:20:54.853Z] [ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[2026-11-02T00:20:54.853Z] [ERROR] 
+[2026-11-02T00:20:54.853Z] [ERROR] For more information about the errors and possible solutions, please read the following articles:
+[2026-11-02T00:20:54.854Z] [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[Pipeline] }
+[Pipeline] // withCredentials
+Post stage
+[Pipeline] archiveArtifacts
+[2026-11-02T00:20:56.355Z] Archiving artifacts
+[Pipeline] publishHTML
+[2026-11-02T00:20:56.753Z] [htmlpublisher] Archiving HTML reports...
+[2026-11-02T00:20:56.865Z] [htmlpublisher] Archiving at BUILD level /var/jenkins_home/workspace/finsecure-pay/target to OWASP_20Dependency-Check
+[2026-11-02T00:20:56.883Z] [htmlpublisher] Copying recursive using current thread
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Package)
+Stage "Package" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Container Build)
+Stage "Container Build" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Image Scan - Trivy)
+Stage "Image Scan - Trivy" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push - Docker Hub)
+Stage "Push - Docker Hub" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy - EKS)
+Stage "Deploy - EKS" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Rollback - EKS)
+Stage "Rollback - EKS" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Smoke Test)
+Stage "Smoke Test" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
+[2026-11-02T00:21:00.887Z] + rm -f kubeconfig
+[Pipeline] sh
+[2026-11-02T00:21:01.228Z] + docker image prune -f
+[2026-11-02T00:21:01.779Z] Total reclaimed space: 0B
+[Pipeline] emailext
+[2026-11-02T00:21:02.134Z] Sending email to: chungyi.pitt@gmail.com
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE
