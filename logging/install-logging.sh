@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Installs EFK logging: Elasticsearch + Kibana (manifests) and Fluent Bit (Helm DaemonSet)
 set -euo pipefail
 cd "$(dirname "$0")"

@@ -1,4 +1,4 @@
-﻿// =============================================================================
+// =============================================================================
 // FinSecure Pay - CI/CD pipeline
 // Checkout -> Build -> Unit Test -> Code Quality (SonarCloud) -> Dependency Scan
 // (OWASP) -> Package -> Container Build -> Image Scan (Trivy) -> Push (Docker Hub)
@@ -53,26 +53,27 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                sh 'chmod +x mvnw && git log -1 --pretty="Commit %h by %an: %s"'
                 script {
+                    env.RUN_MODE = params.MODE ?: 'deploy'
                     env.GIT_SHORT = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
                     env.POM_VERSION = sh(script: "./mvnw -q help:evaluate -Dexpression=project.version -DforceStdout",
                                          returnStdout: true).trim()
                     // Meaningful, traceable version: <semver>-<build>-<commit>
                     env.IMAGE_TAG = "${env.POM_VERSION}-${env.BUILD_NUMBER}-${env.GIT_SHORT}"
-                    currentBuild.displayName = "#${env.BUILD_NUMBER} ${params.MODE} ${params.MODE == 'deploy' ? env.IMAGE_TAG : params.ROLLBACK_TAG}"
+                    currentBuild.displayName = "#${env.BUILD_NUMBER} ${env.RUN_MODE} ${env.RUN_MODE == 'deploy' ? env.IMAGE_TAG : (params.ROLLBACK_TAG ?: 'prev')}"
                 }
-                sh 'chmod +x mvnw && git log -1 --pretty="Commit %h by %an: %s"'
             }
         }
 
         // ------------------------------------------------------------- CI ----
         stage('Build') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps { sh './mvnw -B -ntp clean compile' }
         }
 
         stage('Unit Test') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 // A failing test fails this stage, and therefore the whole pipeline - nothing is deployed.
                 sh './mvnw -B -ntp test'
@@ -86,7 +87,7 @@ pipeline {
         }
 
         stage('Code Quality - SonarCloud') {
-            when { allOf { expression { params.MODE == 'deploy' }; expression { !params.SKIP_SONAR } } }
+            when { allOf { expression { env.RUN_MODE == 'deploy' }; expression { !params.SKIP_SONAR } } }
             steps {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     // sonar.qualitygate.wait=true makes the scanner fail the build if the Quality Gate fails
@@ -103,7 +104,7 @@ pipeline {
         }
 
         stage('Dependency Scan - OWASP') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
                     // SECURITY GATE #1: fails when any dependency has a CVE with CVSS >= 7 (HIGH/CRITICAL)
@@ -121,7 +122,7 @@ pipeline {
         }
 
         stage('Package') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 sh './mvnw -B -ntp package -DskipTests'
                 archiveArtifacts artifacts: 'target/finsecure-pay.jar', fingerprint: true
@@ -129,7 +130,7 @@ pipeline {
         }
 
         stage('Container Build') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 sh '''
                   DOCKER_BUILDKIT=1 docker build \
@@ -143,7 +144,7 @@ pipeline {
         }
 
         stage('Image Scan - Trivy') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 sh '''
                   mkdir -p reports
@@ -162,7 +163,7 @@ pipeline {
         }
 
         stage('Push - Docker Hub') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
                                                   usernameVariable: 'DH_USER', passwordVariable: 'DH_TOKEN')]) {
@@ -178,7 +179,7 @@ pipeline {
 
         // ------------------------------------------------------------- CD ----
         stage('Deploy - EKS') {
-            when { expression { params.MODE == 'deploy' } }
+            when { expression { env.RUN_MODE == 'deploy' } }
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'aws-creds',
@@ -218,7 +219,7 @@ pipeline {
         }
 
         stage('Rollback - EKS') {
-            when { expression { params.MODE == 'rollback' } }
+            when { expression { env.RUN_MODE == 'rollback' } }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-creds',
                                      usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -268,7 +269,7 @@ pipeline {
                 subject: "SUCCESS: ${env.JOB_NAME} ${currentBuild.displayName}",
                 mimeType: 'text/html',
                 body: """<p>Pipeline <b>succeeded</b>.</p>
-                         <p>Mode: ${params.MODE}<br/>Image: ${env.IMAGE_REPO}:${env.IMAGE_TAG}<br/>
+                         <p>Mode: ${env.RUN_MODE}<br/>Image: ${env.IMAGE_REPO}:${env.IMAGE_TAG}<br/>
                          Commit: ${env.GIT_SHORT}</p>
                          <p><a href="${env.BUILD_URL}">Open build</a></p>""")
         }
