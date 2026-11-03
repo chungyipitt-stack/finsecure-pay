@@ -282,6 +282,74 @@ def generate_figures():
     fig.savefig(FIG_DIR / "fig5_ai_triage_architecture.png", dpi=220)
     plt.close(fig)
 
+    # --- Figure 0: Cover Background (DevOps & AI Theme, 16:9 Widescreen) ---
+    import numpy as np
+    fig, ax = plt.subplots(figsize=(13.333, 7.5), dpi=200)
+    ax.set_xlim(0, 13.333)
+    ax.set_ylim(0, 7.5)
+    ax.axis("off")
+
+    # Smooth dark navy -> deep indigo -> cyber teal gradient background
+    grad = np.zeros((300, 500, 3))
+    for i in range(300):
+        for j in range(500):
+            u = j / 500.0
+            v = i / 300.0
+            r = (6 + 18 * u + 12 * (1 - v)) / 255.0
+            g = (12 + 28 * u + 22 * v) / 255.0
+            b = (28 + 65 * u + 35 * (1 - v)) / 255.0
+            grad[i, j] = [min(1, r), min(1, g), min(1, b)]
+    ax.imshow(grad, extent=[0, 13.333, 0, 7.5], aspect="auto", zorder=0)
+
+    # Subtle cyber grid lines
+    for gx in np.linspace(0, 13.333, 28):
+        ax.plot([gx, gx], [0, 7.5], color="#38BDF8", alpha=0.05, lw=0.6, zorder=1)
+    for gy in np.linspace(0, 7.5, 16):
+        ax.plot([0, 13.333], [gy, gy], color="#38BDF8", alpha=0.05, lw=0.6, zorder=1)
+
+    # Right-side DevOps Infinity Loop (Glowing Cyan / Violet)
+    t = np.linspace(0, 2 * np.pi, 400)
+    scale_x, scale_y = 1.85, 0.95
+    cx, cy = 10.15, 4.75
+    inf_x = cx + scale_x * np.sin(t)
+    inf_y = cy + scale_y * np.sin(t) * np.cos(t)
+    for lw, al in [(18, 0.06), (11, 0.14), (6, 0.30), (2.8, 0.90)]:
+        ax.plot(inf_x, inf_y, color="#38BDF8", alpha=al, lw=lw, zorder=2)
+
+    ax.text(cx - 0.92, cy, "DEV\nBuild • Test\nSecOps", ha="center", va="center",
+            color="#E0F2FE", fontsize=9.5, fontweight="bold", zorder=4)
+    ax.text(cx + 0.92, cy, "OPS\nDeploy • EKS\nMonitor", ha="center", va="center",
+            color="#DDD6FE", fontsize=9.5, fontweight="bold", zorder=4)
+
+    # AI Neural Network Constellation (Right / Lower-Right)
+    ai_nodes = [
+        (8.2, 2.5), (8.9, 3.1), (8.8, 1.8), (9.7, 2.6), (9.8, 1.4),
+        (10.6, 3.0), (10.7, 2.0), (11.5, 2.7), (11.6, 1.5), (12.4, 2.2),
+        (12.2, 3.4), (7.6, 1.7)
+    ]
+    for i_n, (x1, y1) in enumerate(ai_nodes):
+        for j_n, (x2, y2) in enumerate(ai_nodes):
+            if i_n < j_n and np.hypot(x2 - x1, y2 - y1) < 1.55:
+                ax.plot([x1, x2], [y1, y2], color="#A78BFA", alpha=0.32, lw=1.2, zorder=2)
+    for (nx, ny) in ai_nodes:
+        ax.scatter([nx], [ny], s=95, color="#38BDF8", alpha=0.28, zorder=3)
+        ax.scatter([nx], [ny], s=28, color="#F0F9FF", alpha=0.95, zorder=4)
+
+    # AI Core Badge on right
+    ai_box = mpatches.FancyBboxPatch((8.55, 0.65), 3.9, 0.62, boxstyle="round,pad=0.02,rounding_size=0.12",
+                                     facecolor="#1E1B4B", edgecolor="#818CF8", linewidth=1.5, alpha=0.88, zorder=4)
+    ax.add_patch(ai_box)
+    ax.text(10.5, 0.96, "AI-Driven Observability • Cloud-Native DevSecOps",
+            ha="center", va="center", color="#C7D2FE", fontsize=9.5, fontweight="bold", zorder=5)
+
+    # Left glowing accent bar
+    ax.plot([0.62, 0.62], [1.0, 6.5], color="#38BDF8", lw=4.5, alpha=0.95, zorder=4)
+    ax.plot([0.62, 3.8], [6.5, 6.5], color="#38BDF8", lw=2.0, alpha=0.75, zorder=4)
+
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    fig.savefig(FIG_DIR / "fig0_cover_bg_devops_ai.png", dpi=200)
+    plt.close(fig)
+
 
 # =============================================================================
 # STEP 2: GENERATE 10-SLIDE POWERPOINT PRESENTATION (.PPTX)
@@ -311,9 +379,82 @@ def add_header(slide, prs, slide_num, title, subtitle):
     footer = slide.shapes.add_textbox(Inches(0.4), Inches(7.12), Inches(12.5), Inches(0.3))
     ftf = footer.text_frame
     fp = ftf.paragraphs[0]
-    fp.text = f"FinSecure Pay — Cloud-Native DevOps & DevSecOps Capstone  |  https://github.com/chungyipitt-stack/finsecure-pay  |  Slide {slide_num}/10"
+    fp.text = f"Capstone Assignment: FinSecure Pay  |  Chungyi Wang  |  2026/11/04  |  https://github.com/chungyipitt-stack/finsecure-pay  |  Slide {slide_num}/10"
     fp.font.size = Pt(9)
     fp.font.color.rgb = RGBColor(100, 116, 139)
+
+
+def add_cover_slide(prs, blank):
+    cover = prs.slides.add_slide(blank)
+    # Full-slide DevOps & AI background image
+    cover.shapes.add_picture(
+        str(FIG_DIR / "fig0_cover_bg_devops_ai.png"),
+        Inches(0), Inches(0), width=Inches(13.333), height=Inches(7.5)
+    )
+
+    # Top pill badge
+    badge = cover.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.95), Inches(1.15), Inches(4.8), Inches(0.48))
+    badge.fill.solid()
+    badge.fill.fore_color.rgb = RGBColor(15, 23, 42)
+    badge.line.color.rgb = RGBColor(56, 189, 248)
+    badge.line.width = Pt(1.5)
+    btf = badge.text_frame
+    bp = btf.paragraphs[0]
+    bp.text = "CLOUD-NATIVE DEVOPS • DEVSECOPS • AI OPERATIONS"
+    bp.font.size = Pt(10.5)
+    bp.font.bold = True
+    bp.font.color.rgb = RGBColor(56, 189, 248)
+
+    # Main Title Box
+    tbox = cover.shapes.add_textbox(Inches(0.95), Inches(1.85), Inches(7.2), Inches(2.6))
+    ttf = tbox.text_frame
+    ttf.word_wrap = True
+    p_title = ttf.paragraphs[0]
+    p_title.text = "Capstone Assignment:\nFinSecure Pay: Automating a\nCloud-Native DevOps Pipeline"
+    p_title.font.size = Pt(32)
+    p_title.font.bold = True
+    p_title.font.color.rgb = RGBColor(255, 255, 255)
+    p_title.space_after = Pt(12)
+
+    p_sub = ttf.add_paragraph()
+    p_sub.text = "End-to-End CI/CD, Shift-Left Security Gates, AWS EKS Orchestration, Full-Stack Observability & AI-Assisted Incident Triage"
+    p_sub.font.size = Pt(13.5)
+    p_sub.font.color.rgb = RGBColor(186, 230, 253)
+
+    # Presenter & Date Card
+    meta_card = cover.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.95), Inches(4.75), Inches(6.6), Inches(1.65))
+    meta_card.fill.solid()
+    meta_card.fill.fore_color.rgb = RGBColor(15, 23, 42)
+    meta_card.line.color.rgb = RGBColor(129, 140, 248)
+    meta_card.line.width = Pt(1.5)
+    mtf = meta_card.text_frame
+    mtf.word_wrap = True
+    mtf.margin_left = Inches(0.25)
+    mtf.margin_top = Inches(0.18)
+
+    mp1 = mtf.paragraphs[0]
+    mp1.text = "Author / Presenter:   Chungyi Wang"
+    mp1.font.size = Pt(16)
+    mp1.font.bold = True
+    mp1.font.color.rgb = RGBColor(255, 255, 255)
+    mp1.space_after = Pt(6)
+
+    mp2 = mtf.add_paragraph()
+    mp2.text = "Submission Date:      2026/11/04"
+    mp2.font.size = Pt(14)
+    mp2.font.bold = True
+    mp2.font.color.rgb = RGBColor(56, 189, 248)
+    mp2.space_after = Pt(6)
+
+    mp3 = mtf.add_paragraph()
+    mp3.text = "GitHub Repository:    https://github.com/chungyipitt-stack/finsecure-pay"
+    mp3.font.size = Pt(11)
+    mp3.font.color.rgb = RGBColor(203, 213, 225)
+
+    cover.notes_slide.notes_text_frame.text = (
+        "Title Slide: Capstone Assignment: FinSecure Pay: Automating a Cloud-Native DevOps Pipeline. "
+        "Presented by Chungyi Wang, Date: 2026/11/04."
+    )
 
 
 def add_bullet_card(slide, left, top, width, height, heading, bullets, header_rgb=(30, 58, 138), font_size=11):
@@ -349,6 +490,9 @@ def build_pptx():
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
     blank = prs.slide_layouts[6]
+
+    # --- COVER PAGE (First Page: DevOps & AI Theme) ---
+    add_cover_slide(prs, blank)
 
     # --- SLIDE 1: Project overview and business problem ---
     s1 = prs.slides.add_slide(blank)
@@ -644,24 +788,33 @@ def build_docx():
         section.left_margin = DocInches(0.85)
         section.right_margin = DocInches(0.85)
 
-    # Title Section
+    # Dedicated Cover Page (First Page) with DevOps & AI Theme
+    doc.add_picture(str(FIG_DIR / "fig0_cover_bg_devops_ai.png"), width=DocInches(6.5))
+    doc.add_paragraph()
+
     title_p = doc.add_paragraph()
     title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_title = title_p.add_run("FinSecure Pay: Automating a Cloud-Native DevOps & DevSecOps Pipeline\n")
+    r_title = title_p.add_run("Capstone Assignment: FinSecure Pay: Automating a Cloud-Native DevOps Pipeline\n\n")
     r_title.font.size = DocPt(20)
     r_title.font.bold = True
     r_title.font.color.rgb = DocRGB(15, 23, 42)
 
-    r_sub = title_p.add_run("Final Capstone Project — Detailed Technical Summary Report & Evaluation Evidence")
+    r_sub = title_p.add_run("Detailed Technical Summary Report, DevSecOps Architecture, AI Application & Evaluation Evidence\n\n")
     r_sub.font.size = DocPt(13)
     r_sub.font.color.rgb = DocRGB(30, 58, 138)
 
+    r_author = title_p.add_run("Author: Chungyi Wang\nDate: 2026/11/04\n")
+    r_author.font.size = DocPt(14)
+    r_author.font.bold = True
+    r_author.font.color.rgb = DocRGB(15, 23, 42)
+
     # Metadata & Links Table
-    meta_table = doc.add_table(rows=8, cols=2)
+    meta_table = doc.add_table(rows=9, cols=2)
     meta_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     meta_table.style = "Table Grid"
     meta_rows = [
-        ("Author / Role", "Chungyi — Cloud-Native DevOps & DevSecOps Engineer (Individual Capstone Work)"),
+        ("Assignment Title", "Capstone Assignment: FinSecure Pay: Automating a Cloud-Native DevOps Pipeline"),
+        ("Author & Date", "Chungyi Wang  |  2026/11/04 (Individual Capstone Work)"),
         ("GitHub Repository (Public)", "https://github.com/chungyipitt-stack/finsecure-pay"),
         ("Docker Hub Repository (Public)", "https://hub.docker.com/r/chungyi1979/finsecure-pay/tags"),
         ("SonarCloud Dashboard (Public)", "https://sonarcloud.io/project/overview?id=chungyipitt-stack_finsecure-pay"),
@@ -679,7 +832,7 @@ def build_docx():
         r1 = c1.paragraphs[0].add_run(v)
         r1.font.size = DocPt(9.5)
 
-    doc.add_paragraph()
+    doc.add_page_break()
 
     # 1. Executive Summary & Business Problem (Slide 1)
     doc.add_heading("1. Project Overview, Business Problem & Architecture (Slide 1 & Task 7)", level=1)
@@ -860,8 +1013,13 @@ def build_docx():
         doc.add_paragraph(item, style="List Bullet")
 
     docx_path = BASE_DIR / "FinSecure_Pay_Capstone_Summary_Report.docx"
-    doc.save(str(docx_path))
-    return docx_path
+    try:
+        doc.save(str(docx_path))
+        return docx_path
+    except PermissionError:
+        alt_path = BASE_DIR / "FinSecure_Pay_Capstone_Summary_Report_Updated.docx"
+        doc.save(str(alt_path))
+        return alt_path
 
 
 if __name__ == "__main__":
